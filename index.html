@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>prot.tn - Protein House</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        header p {
+            font-size: 1.2em;
+            font-weight: 300;
+            color: #666;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .meal-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            transform: scale(1.02);
+            z-index: 10;
+        }
+
+        .meal-photo-container {
+            width: 100%;
+            min-height: 280px;
+            background: linear-gradient(145deg, #2c2c2c 0%, #1a1a1a 100%);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            overflow: auto;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .meal-photo {
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, #ffffff 0%, #f5f5f5 60%, #e0e0e0 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.5);
+            position: relative;
+            border: 8px solid #e8e8e8;
+        }
+
+        .meal-photo::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-radius: 50%;
+            border: 1px solid rgba(200,200,200,0.3);
+        }
+
+        .meal-ingredient-icon {
+            font-size: 2.2em;
+            animation: popIn 0.3s ease;
+            transition: transform 0.2s ease;
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+            position: relative;
+            z-index: 1;
+        }
+
+        .meal-ingredient-icon:hover {
+            transform: scale(1.15) rotate(-5deg);
+            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.3));
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.15) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .empty-meal-placeholder {
+            font-size: 3em;
+            color: #ccc;
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+        }
+
+        .empty-state-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .empty-state-message h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .empty-state-message p {
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .meal-items-count {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .meal-items-count strong {
+            color: #000;
+            font-size: 1.2em;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85em;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .progress-bars {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            margin-bottom: 15px;
+        }
+
+        .progress-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.4s ease, background 0.4s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill.protein-bar {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .progress-bar-fill.calorie-bar {
+            background: linear-gradient(90deg, #f87171, #ef4444);
+        }
+
+        .progress-bar-fill.weight-bar {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+        }
+
+        .mobile-sticky-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .mobile-sticky-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .mobile-price {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .mobile-protein {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .mobile-protein strong {
+            color: #000;
+            font-size: 1.2em;
+        }
+
+        .mobile-cta {
+            padding: 12px 20px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .price-display {
+            background: #000;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .price-display .label {
+            font-size: 1em;
+            color: #fff;
+            margin-bottom: 5px;
+            font-weight: 300;
+        }
+
+        .price-display .value {
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .macro-highlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .macro-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .macro-card.protein {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffffff 100%);
+            border-color: #ffd699;
+        }
+
+        .macro-card.calories {
+            background: linear-gradient(135deg, #ffe6e6 0%, #ffffff 100%);
+            border-color: #ffb3b3;
+        }
+
+        .macro-card .label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .macro-card .value {
+            font-size: 2.3em;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .other-macros {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .other-macros h3 {
+            font-size: 0.9em;
+            color: #000;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .macro-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .macro-row:last-child {
+            border-bottom: none;
+        }
+
+        .meal-quantity {
+            margin-bottom: 20px;
+        }
+
+        .meal-quantity label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .meal-quantity input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #000;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #000;
+            border: 2px solid #000;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .btn-clear {
+            background: #fff;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            font-size: 0.9em;
+            padding: 10px;
+        }
+
+        .btn-clear:hover {
+            background: #fff;
+            color: #000;
+            border-color: #000;
+        }
+
+        .builder-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            opacity: 0.95;
+        }
+
+        .default-meals {
+            margin-bottom: 30px;
+        }
+
+        .default-meals h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .meals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .default-meal-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            padding: 25px;
+            border-radius: 15px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .default-meal-card:hover {
+            border-color: #000;
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .default-meal-card h3 {
+            font-size: 1.6em;
+            margin-bottom: 12px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meal-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .meal-tag.high-protein {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .meal-tag.balanced {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .default-meal-card .meal-info {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .meal-icon-large {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .ingredients-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: #000;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .ingredient-category {
+            margin-bottom: 35px;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .category-title {
+            font-size: 1.4em;
+            color: #000;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .ingredient-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .ingredient-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .ingredient-card:hover {
+            border-color: #000;
+        }
+
+        .ingredient-card.highlight {
+            animation: highlightPulse 0.5s ease;
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% {
+                background: #fff;
+                transform: scale(1);
+            }
+            50% {
+                background: #f0f0f0;
+                transform: scale(1.02);
+            }
+        }
+
+        .ingredient-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .ingredient-icon {
+            font-size: 2em;
+        }
+
+        .ingredient-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .ingredient-unit {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .ingredient-nutrition {
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .ingredient-nutrition-compact {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+        }
+
+        .nutrition-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nutrition-item strong {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .info-toggle {
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .info-toggle:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .full-nutrition {
+            display: none;
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .full-nutrition.show {
+            display: block;
+        }
+
+        .ingredient-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 42px;
+            height: 42px;
+            border: 2px solid #000;
+            border-radius: 50%;
+            background: #fff;
+            color: #000;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .control-btn:hover {
+            background: #000;
+            color: #fff;
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn.add-feedback {
+            animation: addGlow 0.4s ease;
+        }
+
+        .control-btn.remove-feedback {
+            animation: removeGlow 0.4s ease;
+        }
+
+        @keyframes addGlow {
+            0%, 100% {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+                background: #22c55e;
+                color: white;
+                border-color: #22c55e;
+            }
+        }
+
+        @keyframes removeGlow {
+            0%, 100% {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+                background: #ef4444;
+                color: white;
+                border-color: #ef4444;
+            }
+        }
+
+        .quantity-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            color: #000;
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .quantity-input {
+            width: 50px;
+            padding: 5px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .ingredient-price {
+            font-size: 0.9em;
+            color: #000;
+            font-weight: 600;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .free-item {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            color: #333;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .free-item h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .free-item p {
+            font-size: 0.95em;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .meal-summary {
+                position: relative;
+                top: 0;
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+                letter-spacing: 4px;
+            }
+
+            .meals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .macro-highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .ingredient-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meal-photo-container {
+                min-height: 180px;
+            }
+
+            .meal-photo {
+                width: 200px;
+                height: 200px;
+            }
+
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.4em;
+            }
+
+            .mobile-sticky-bar {
+                display: block;
+            }
+
+            body {
+                padding-bottom: 90px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .meal-summary {
+                transform: scale(1);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-content p {
+            margin-bottom: 30px;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>prot.tn</h1>
+            <p>Premium Protein House - Build Your Perfect Meal</p>
+        </header>
+
+        <div class="main-content">
+            <div class="builder-section">
+                <div class="default-meals">
+                    <h2>🎯 Quick Select Meals</h2>
+                    <div class="meals-grid">
+                        <div class="default-meal-card" onclick="selectDefaultMeal('power')">
+                            <span class="meal-tag high-protein">HIGH PROTEIN</span>
+                            <div class="meal-icon-large">💪</div>
+                            <h3>Power Bowl</h3>
+                            <div class="meal-info">
+                                <strong>150g Rice + 200g Scallop + 2 Cuisse + 100g Salad</strong><br>
+                                🥇 Protein: 85g | Carbs: 140g<br>
+                                🔥 Calories: 1120 kcal<br>
+                                💰 Price: 28.00 TND
+                            </div>
+                        </div>
+                        <div class="default-meal-card" onclick="selectDefaultMeal('lean')">
+                            <span class="meal-tag balanced">BALANCED</span>
+                            <div class="meal-icon-large">🥗</div>
+                            <h3>Lean & Clean</h3>
+                            <div class="meal-info">
+                                <strong>100g Rice + 100g Scallop + 3 Eggs + 200g Salad</strong><br>
+                                🥇 Protein: 60g | Carbs: 90g<br>
+                                🔥 Calories: 770 kcal<br>
+                                💰 Price: 19.50 TND
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ingredients-section">
+                    <h2>🔨 Build Your Own Meal</h2>
+
+                    <div class="ingredient-category">
+                        <div class="category-title">🍖 Proteins</div>
+                        <div class="ingredient-grid">
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🦐</div>
+                                    <div>
+                                        <div class="ingredient-name">Scallop</div>
+                                        <div class="ingredient-unit">100g per unit</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>20g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>3g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>100</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>8.50 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('scallop', -1)">−</button>
+                                    <div class="quantity-display" id="qty-scallop">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('scallop', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-scallop">0.00 TND</div>
+                            </div>
+
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🍗</div>
+                                    <div>
+                                        <div class="ingredient-name">Cuisse (Chicken Thigh)</div>
+                                        <div class="ingredient-unit">1 piece</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>18g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>0g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>160</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>3.50 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('cuisse', -1)">−</button>
+                                    <div class="quantity-display" id="qty-cuisse">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('cuisse', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-cuisse">0.00 TND</div>
+                            </div>
+
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🍳</div>
+                                    <div>
+                                        <div class="ingredient-name">Eggs</div>
+                                        <div class="ingredient-unit">1 piece</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>6g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>1g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>70</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>0.80 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('eggs', -1)">−</button>
+                                    <div class="quantity-display" id="qty-eggs">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('eggs', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-eggs">0.00 TND</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ingredient-category">
+                        <div class="category-title">🍚 Carbs</div>
+                        <div class="ingredient-grid">
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🍚</div>
+                                    <div>
+                                        <div class="ingredient-name">Rice</div>
+                                        <div class="ingredient-unit">50g per unit</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>3g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>40g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>175</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>1.50 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('rice', -1)">−</button>
+                                    <div class="quantity-display" id="qty-rice">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('rice', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-rice">0.00 TND</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ingredient-category">
+                        <div class="category-title">🥗 Salads</div>
+                        <div class="ingredient-grid">
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🥬</div>
+                                    <div>
+                                        <div class="ingredient-name">Normal Salad</div>
+                                        <div class="ingredient-unit">100g per portion</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>1g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>5g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>25</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>2.00 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('salad', -1)">−</button>
+                                    <div class="quantity-display" id="qty-salad">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('salad', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-salad">0.00 TND</div>
+                            </div>
+
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🍟</div>
+                                    <div>
+                                        <div class="ingredient-name">Frite Salad</div>
+                                        <div class="ingredient-unit">100g per portion</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>2g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>8g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>65</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>2.50 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('frite', -1)">−</button>
+                                    <div class="quantity-display" id="qty-frite">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('frite', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-frite">0.00 TND</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="free-item">
+                        <h3>🎁 Free Daily Surprise Fruit!</h3>
+                        <p>Every meal comes with a complimentary fresh fruit of the day!<br>
+                        <strong>Today's Surprise: Apple 🍎</strong><br>
+                        (Approx: 15g Carbs, 80 kcal, Rich in Fiber & Vitamin C)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="meal-summary">
+                <div class="meal-photo-container">
+                    <div class="meal-photo" id="mealEmoji">🍽️</div>
+                </div>
+
+                <div class="price-display">
+                    <div class="label">Total Price</div>
+                    <div class="value"><span id="totalPrice">0.00</span> TND</div>
+                </div>
+
+                <div class="macro-highlights">
+                    <div class="macro-card protein">
+                        <div class="label">💪 Protein</div>
+                        <div class="value"><span id="totalProtein">0</span>g</div>
+                    </div>
+                    <div class="macro-card calories">
+                        <div class="label">🔥 Calories</div>
+                        <div class="value"><span id="totalCalories">0</span></div>
+                    </div>
+                </div>
+
+                <div class="progress-bars">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Protein Progress</span>
+                            <span id="proteinPercent">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill protein-bar" id="proteinBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Calorie Progress</span>
+                            <span id="caloriePercent">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill calorie-bar" id="calorieBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Total Weight</span>
+                            <span id="weightAmount">0g</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill weight-bar" id="weightBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="other-macros">
+                    <h3>Nutritional Details</h3>
+                    <div class="macro-row">
+                        <span>Carbohydrates</span>
+                        <strong><span id="totalCarbs">0</span>g</strong>
+                    </div>
+                    <div class="macro-row">
+                        <span>Fats</span>
+                        <strong><span id="totalFats">0</span>g</strong>
+                    </div>
+                    <div class="macro-row">
+                        <span>Fiber (from fruit)</span>
+                        <strong><span id="totalFiber">4</span>g</strong>
+                    </div>
+                </div>
+
+                <div class="meal-items-count" id="itemsCount">
+                    <strong>0</strong> items in your meal
+                </div>
+
+                <div class="meal-quantity">
+                    <label>Number of Meals</label>
+                    <input type="number" id="mealCount" value="1" min="1" max="7" onchange="updateTotals()">
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="buyBtn" onclick="buyMeal()" disabled>🛒 Buy Now</button>
+                    <button class="btn btn-secondary" id="saveBtn" onclick="saveMeal()" disabled>💾 Save Meal</button>
+                    <button class="btn btn-clear" onclick="clearMeal()">🗑️ Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <h2>✅ Success!</h2>
+            <p id="modalMessage">Your action was successful!</p>
+            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <div class="mobile-sticky-bar" id="mobileBar">
+        <div class="mobile-sticky-content">
+            <div>
+                <div class="mobile-price"><span id="mobileTotalPrice">0.00</span> TND</div>
+                <div class="mobile-protein">💪 <strong id="mobileTotalProtein">0</strong>g Protein</div>
+            </div>
+            <button class="mobile-cta" onclick="scrollToSummary()">View Meal</button>
+        </div>
+    </div>
+
+    <script>
+        const ingredients = {
+            rice: { 
+                qty: 0, 
+                protein: 3, 
+                carbs: 40, 
+                fat: 0.5, 
+                calories: 175, 
+                price: 1.50,
+                emoji: '🍚'
+            },
+            scallop: { 
+                qty: 0, 
+                protein: 20, 
+                carbs: 3, 
+                fat: 1, 
+                calories: 100, 
+                price: 8.50,
+                emoji: '🦐'
+            },
+            cuisse: { 
+                qty: 0, 
+                protein: 18, 
+                carbs: 0, 
+                fat: 10, 
+                calories: 160, 
+                price: 3.50,
+                emoji: '🍗'
+            },
+            eggs: { 
+                qty: 0, 
+                protein: 6, 
+                carbs: 1, 
+                fat: 5, 
+                calories: 70, 
+                price: 0.80,
+                emoji: '🍳'
+            },
+            salad: { 
+                qty: 0, 
+                protein: 1, 
+                carbs: 5, 
+                fat: 0.5, 
+                calories: 25, 
+                price: 2.00,
+                emoji: '🥬'
+            },
+            frite: { 
+                qty: 0, 
+                protein: 2, 
+                carbs: 8, 
+                fat: 3, 
+                calories: 65, 
+                price: 2.50,
+                emoji: '🍟'
+            }
+        };
+
+        function updateIngredient(type, change) {
+            ingredients[type].qty = Math.max(0, ingredients[type].qty + change);
+            document.getElementById(`qty-${type}`).textContent = ingredients[type].qty;
+            
+            // Update individual ingredient price
+            const itemPrice = (ingredients[type].price * ingredients[type].qty).toFixed(2);
+            document.getElementById(`price-${type}`).textContent = itemPrice + ' TND';
+            
+            // Add color feedback to button
+            const buttons = event.target.closest('.ingredient-controls').querySelectorAll('.control-btn');
+            if (change > 0) {
+                event.target.classList.add('add-feedback');
+                setTimeout(() => event.target.classList.remove('add-feedback'), 400);
+            } else if (change < 0) {
+                event.target.classList.add('remove-feedback');
+                setTimeout(() => event.target.classList.remove('remove-feedback'), 400);
+            }
+            
+            // Highlight the ingredient card for visual feedback
+            const card = document.getElementById(`qty-${type}`).closest('.ingredient-card');
+            if (card) {
+                card.classList.add('highlight');
+                setTimeout(() => card.classList.remove('highlight'), 500);
+            }
+            
+            updateTotals();
+            animateMeal();
+            updateItemCount();
+            updateButtonStates();
+            updateProgressBars();
+        }
+
+        function updateTotals() {
+            let totalProtein = 0;
+            let totalCarbs = 15; // Including free fruit
+            let totalFats = 0;
+            let totalCalories = 80; // Including free fruit
+            let totalPrice = 0;
+            let totalWeight = 0;
+
+            for (let key in ingredients) {
+                const ing = ingredients[key];
+                totalProtein += ing.protein * ing.qty;
+                totalCarbs += ing.carbs * ing.qty;
+                totalFats += ing.fat * ing.qty;
+                totalCalories += ing.calories * ing.qty;
+                totalPrice += ing.price * ing.qty;
+                
+                // Calculate weight
+                if (key === 'rice') totalWeight += 50 * ing.qty;
+                else if (key === 'scallop') totalWeight += 100 * ing.qty;
+                else if (key === 'cuisse') totalWeight += 150 * ing.qty;
+                else if (key === 'eggs') totalWeight += 50 * ing.qty;
+                else if (key === 'salad' || key === 'frite') totalWeight += 100 * ing.qty;
+            }
+
+            const mealCount = parseInt(document.getElementById('mealCount').value) || 1;
+
+            document.getElementById('totalProtein').textContent = (totalProtein * mealCount).toFixed(0);
+            document.getElementById('totalCarbs').textContent = (totalCarbs * mealCount).toFixed(0);
+            document.getElementById('totalFats').textContent = (totalFats * mealCount).toFixed(1);
+            document.getElementById('totalCalories').textContent = (totalCalories * mealCount).toFixed(0);
+            document.getElementById('totalPrice').textContent = (totalPrice * mealCount).toFixed(2);
+
+            // Update mobile bar
+            document.getElementById('mobileTotalPrice').textContent = (totalPrice * mealCount).toFixed(2);
+            document.getElementById('mobileTotalProtein').textContent = (totalProtein * mealCount).toFixed(0);
+
+            // Store for progress bars
+            window.currentTotals = {
+                protein: totalProtein * mealCount,
+                calories: totalCalories * mealCount,
+                weight: totalWeight * mealCount
+            };
+        }
+
+        function updateItemCount() {
+            let totalItems = 0;
+            for (let key in ingredients) {
+                totalItems += ingredients[key].qty;
+            }
+            
+            const countElement = document.getElementById('itemsCount');
+            countElement.innerHTML = `<strong>${totalItems}</strong> item${totalItems !== 1 ? 's' : ''} in your meal`;
+        }
+
+        function updateButtonStates() {
+            const hasItems = Object.values(ingredients).some(ing => ing.qty > 0);
+            document.getElementById('buyBtn').disabled = !hasItems;
+            document.getElementById('saveBtn').disabled = !hasItems;
+        }
+
+        function clearMeal() {
+            if (!Object.values(ingredients).some(ing => ing.qty > 0)) {
+                return;
+            }
+
+            if (confirm('Are you sure you want to clear your meal?')) {
+                for (let key in ingredients) {
+                    ingredients[key].qty = 0;
+                    document.getElementById(`qty-${key}`).textContent = 0;
+                    document.getElementById(`price-${key}`).textContent = '0.00 TND';
+                }
+                updateTotals();
+                animateMeal();
+                updateItemCount();
+                updateButtonStates();
+                updateProgressBars();
+            }
+        }
+
+        function updateProgressBars() {
+            if (!window.currentTotals) return;
+
+            // Protein progress (target: 100g for a complete meal)
+            const proteinPercent = Math.min((window.currentTotals.protein / 100) * 100, 100);
+            document.getElementById('proteinBar').style.width = proteinPercent + '%';
+            document.getElementById('proteinPercent').textContent = Math.round(proteinPercent) + '%';
+
+            // Calorie progress (target: 800 kcal for a complete meal)
+            const caloriePercent = Math.min((window.currentTotals.calories / 800) * 100, 100);
+            document.getElementById('calorieBar').style.width = caloriePercent + '%';
+            document.getElementById('caloriePercent').textContent = Math.round(caloriePercent) + '%';
+
+            // Weight progress (shows actual weight)
+            const weightPercent = Math.min((window.currentTotals.weight / 500) * 100, 100);
+            document.getElementById('weightBar').style.width = weightPercent + '%';
+            document.getElementById('weightAmount').textContent = window.currentTotals.weight + 'g';
+        }
+
+        function scrollToSummary() {
+            document.querySelector('.meal-summary').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function animateMeal() {
+            const mealPhoto = document.getElementById('mealEmoji');
+            
+            // Clear current content
+            mealPhoto.innerHTML = '';
+            
+            // Check if meal is empty
+            let isEmpty = true;
+            for (let key in ingredients) {
+                if (ingredients[key].qty > 0) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+
+            // Show placeholder if empty
+            if (isEmpty) {
+                const emptyContainer = document.createElement('div');
+                emptyContainer.style.textAlign = 'center';
+                
+                const placeholder = document.createElement('div');
+                placeholder.className = 'empty-meal-placeholder';
+                placeholder.textContent = '🍽️';
+                emptyContainer.appendChild(placeholder);
+                
+                const message = document.createElement('div');
+                message.style.color = '#999';
+                message.style.fontSize = '0.9em';
+                message.style.marginTop = '10px';
+                message.textContent = 'Add ingredients to build your meal';
+                emptyContainer.appendChild(message);
+                
+                mealPhoto.appendChild(emptyContainer);
+                return;
+            }
+
+            // Add ingredients in realistic plating order: rice base, then proteins, then vegetables
+            const platingOrder = ['rice', 'scallop', 'cuisse', 'eggs', 'salad', 'frite'];
+            
+            for (let key of platingOrder) {
+                const ing = ingredients[key];
+                for (let i = 0; i < ing.qty; i++) {
+                    const icon = document.createElement('div');
+                    icon.className = 'meal-ingredient-icon';
+                    icon.textContent = ing.emoji;
+                    icon.title = key.charAt(0).toUpperCase() + key.slice(1);
+                    mealPhoto.appendChild(icon);
+                }
+            }
+
+            // Add free surprise fruit icon at the end
+            if (!isEmpty) {
+                const fruitIcon = document.createElement('div');
+                fruitIcon.className = 'meal-ingredient-icon';
+                fruitIcon.textContent = '🎁';
+                fruitIcon.title = 'Free Surprise Fruit';
+                fruitIcon.style.fontSize = '0.8em';
+                mealPhoto.appendChild(fruitIcon);
+            }
+        }
+
+        function selectDefaultMeal(type) {
+            // Reset all
+            for (let key in ingredients) {
+                ingredients[key].qty = 0;
+                document.getElementById(`qty-${key}`).textContent = 0;
+                document.getElementById(`price-${key}`).textContent = '0.00 TND';
+            }
+
+            if (type === 'power') {
+                ingredients.rice.qty = 3;
+                ingredients.scallop.qty = 2;
+                ingredients.cuisse.qty = 2;
+                ingredients.salad.qty = 1;
+            } else if (type === 'lean') {
+                ingredients.rice.qty = 2;
+                ingredients.scallop.qty = 1;
+                ingredients.eggs.qty = 3;
+                ingredients.salad.qty = 2;
+            }
+
+            for (let key in ingredients) {
+                document.getElementById(`qty-${key}`).textContent = ingredients[key].qty;
+                const itemPrice = (ingredients[key].price * ingredients[key].qty).toFixed(2);
+                document.getElementById(`price-${key}`).textContent = itemPrice + ' TND';
+            }
+
+            updateTotals();
+            animateMeal();
+            updateItemCount();
+            updateButtonStates();
+            updateProgressBars();
+
+            // Scroll to summary on mobile
+            if (window.innerWidth < 1200) {
+                setTimeout(() => {
+                    document.querySelector('.meal-summary').scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+            }
+        }
+
+        function getMealDescription() {
+            let items = [];
+            for (let key in ingredients) {
+                if (ingredients[key].qty > 0) {
+                    items.push(`${key}: ${ingredients[key].qty}`);
+                }
+            }
+            return items.join(', ');
+        }
+
+        function buyMeal() {
+            const totalPrice = document.getElementById('totalPrice').textContent;
+            const mealCount = document.getElementById('mealCount').value;
+            
+            if (parseFloat(totalPrice) === 0) {
+                alert('Please add ingredients to your meal!');
+                return;
+            }
+
+            // Confirmation dialog
+            const confirmMessage = `Confirm your order?\n\n${getMealDescription()}\nQuantity: ${mealCount} meal(s)\nTotal: ${totalPrice} TND`;
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            // Show loading state
+            const buyBtn = document.getElementById('buyBtn');
+            const originalText = buyBtn.innerHTML;
+            buyBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+            buyBtn.disabled = true;
+
+            const mealDescription = getMealDescription();
+            const protein = document.getElementById('totalProtein').textContent;
+            const calories = document.getElementById('totalCalories').textContent;
+            const carbs = document.getElementById('totalCarbs').textContent;
+            const fats = document.getElementById('totalFats').textContent;
+
+            // Create form for Basin
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://usebasin.com/f/b06e024d33ee';
+            form.style.display = 'none';
+
+            const fields = {
+                'meal': mealDescription,
+                'meal_count': mealCount,
+                'total_price': totalPrice + ' TND',
+                'protein': protein + 'g',
+                'calories': calories + ' kcal',
+                'carbs': carbs + 'g',
+                'fats': fats + 'g'
+            };
+
+            for (let key in fields) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function saveMeal() {
+            const totalPrice = document.getElementById('totalPrice').textContent;
+            
+            if (parseFloat(totalPrice) === 0) {
+                alert('Please add ingredients to your meal!');
+                return;
+            }
+
+            const mealDescription = getMealDescription();
+            const mealData = {
+                ingredients: JSON.parse(JSON.stringify(ingredients)),
+                mealCount: document.getElementById('mealCount').value,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                localStorage.setItem('savedMeal_' + Date.now(), JSON.stringify(mealData));
+                showModal('💾 Meal Saved Successfully!', `Your meal has been saved!<br><br>${mealDescription}<br>Total: ${totalPrice} TND`);
+            } catch (e) {
+                alert('Failed to save meal. Please try again.');
+            }
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modalMessage').innerHTML = `<strong>${title}</strong><br>${message}`;
+            document.getElementById('successModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        // Initialize
+        updateTotals();
+        animateMeal();
+        updateItemCount();
+        updateButtonStates();
+        updateProgressBars();
+
+        // Initialize all ingredient prices
+        for (let key in ingredients) {
+            document.getElementById(`price-${key}`).textContent = '0.00 TND';
+        }
+    </script>
+</body>
+</html>
