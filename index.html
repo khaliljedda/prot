@@ -637,7 +637,7 @@
         }
 
         .ingredient-icon {
-            font-size: 2em;
+            font-size: 3.5em;
         }
 
         .ingredient-name {
@@ -807,11 +807,14 @@
         }
 
         .ingredient-price {
-            font-size: 0.9em;
-            color: #000;
-            font-weight: 600;
-            margin-top: 5px;
+            font-size: 1.1em;
+            color: #fff;
+            font-weight: 700;
+            margin-top: 8px;
             text-align: center;
+            background: #000;
+            padding: 8px 12px;
+            border-radius: 8px;
         }
 
         .free-item {
@@ -981,24 +984,24 @@
                         <div class="ingredient-grid">
                             <div class="ingredient-card">
                                 <div class="ingredient-header">
-                                    <div class="ingredient-icon">🦐</div>
+                                    <div class="ingredient-icon">🥚</div>
                                     <div>
-                                        <div class="ingredient-name">Scallop</div>
+                                        <div class="ingredient-name">Escalope</div>
                                         <div class="ingredient-unit">100g per unit</div>
                                     </div>
                                 </div>
                                 <div class="ingredient-nutrition-compact">
                                     <div class="nutrition-item">
                                         <span>Protein</span>
-                                        <strong>20g</strong>
+                                        <strong>25g</strong>
                                     </div>
                                     <div class="nutrition-item">
                                         <span>Carbs</span>
-                                        <strong>3g</strong>
+                                        <strong>0g</strong>
                                     </div>
                                     <div class="nutrition-item">
                                         <span>Calories</span>
-                                        <strong>100</strong>
+                                        <strong>120</strong>
                                     </div>
                                     <div class="nutrition-item">
                                         <span>Price</span>
@@ -1080,6 +1083,40 @@
                                 </div>
                                 <div class="ingredient-price" id="price-eggs">0.00 TND</div>
                             </div>
+
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🥚</div>
+                                    <div>
+                                        <div class="ingredient-name">Omelette</div>
+                                        <div class="ingredient-unit">1 piece (3 eggs)</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>15g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>2g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>180</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>2.50 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('omelette', -1)">−</button>
+                                    <div class="quantity-display" id="qty-omelette">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('omelette', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-omelette">0.00 TND</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1119,6 +1156,40 @@
                                 </div>
                                 <div class="ingredient-price" id="price-rice">0.00 TND</div>
                             </div>
+
+                            <div class="ingredient-card">
+                                <div class="ingredient-header">
+                                    <div class="ingredient-icon">🍛</div>
+                                    <div>
+                                        <div class="ingredient-name">Borghol (Bulgur)</div>
+                                        <div class="ingredient-unit">50g per unit</div>
+                                    </div>
+                                </div>
+                                <div class="ingredient-nutrition-compact">
+                                    <div class="nutrition-item">
+                                        <span>Protein</span>
+                                        <strong>4g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Carbs</span>
+                                        <strong>38g</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Calories</span>
+                                        <strong>170</strong>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span>Price</span>
+                                        <strong>1.50 TND</strong>
+                                    </div>
+                                </div>
+                                <div class="ingredient-controls">
+                                    <button class="control-btn" onclick="updateIngredient('borghol', -1)">−</button>
+                                    <div class="quantity-display" id="qty-borghol">0</div>
+                                    <button class="control-btn" onclick="updateIngredient('borghol', 1)">+</button>
+                                </div>
+                                <div class="ingredient-price" id="price-borghol">0.00 TND</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1148,7 +1219,7 @@
                                     </div>
                                     <div class="nutrition-item">
                                         <span>Price</span>
-                                        <strong>2.00 TND</strong>
+                                        <strong>1.50 TND</strong>
                                     </div>
                                 </div>
                                 <div class="ingredient-controls">
@@ -1163,7 +1234,7 @@
                                 <div class="ingredient-header">
                                     <div class="ingredient-icon">🍟</div>
                                     <div>
-                                        <div class="ingredient-name">Frite Salad</div>
+                                        <div class="ingredient-name">Salade Sautée</div>
                                         <div class="ingredient-unit">100g per portion</div>
                                     </div>
                                 </div>
@@ -1182,7 +1253,7 @@
                                     </div>
                                     <div class="nutrition-item">
                                         <span>Price</span>
-                                        <strong>2.50 TND</strong>
+                                        <strong>1.50 TND</strong>
                                     </div>
                                 </div>
                                 <div class="ingredient-controls">
@@ -1225,35 +1296,6 @@
                     </div>
                 </div>
 
-                <div class="progress-bars">
-                    <div class="progress-item">
-                        <div class="progress-label">
-                            <span>Protein Progress</span>
-                            <span id="proteinPercent">0%</span>
-                        </div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill protein-bar" id="proteinBar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-label">
-                            <span>Calorie Progress</span>
-                            <span id="caloriePercent">0%</span>
-                        </div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill calorie-bar" id="calorieBar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-label">
-                            <span>Total Weight</span>
-                            <span id="weightAmount">0g</span>
-                        </div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill weight-bar" id="weightBar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="other-macros">
                     <h3>Nutritional Details</h3>
@@ -1318,14 +1360,23 @@
                 price: 1.50,
                 emoji: '🍚'
             },
+            borghol: { 
+                qty: 0, 
+                protein: 4, 
+                carbs: 38, 
+                fat: 0.8, 
+                calories: 170, 
+                price: 1.50,
+                emoji: '🍛'
+            },
             scallop: { 
                 qty: 0, 
-                protein: 20, 
-                carbs: 3, 
-                fat: 1, 
-                calories: 100, 
+                protein: 25, 
+                carbs: 0, 
+                fat: 2, 
+                calories: 120, 
                 price: 8.50,
-                emoji: '🦐'
+                emoji: '🥚'
             },
             cuisse: { 
                 qty: 0, 
@@ -1345,13 +1396,22 @@
                 price: 0.80,
                 emoji: '🍳'
             },
+            omelette: { 
+                qty: 0, 
+                protein: 15, 
+                carbs: 2, 
+                fat: 12, 
+                calories: 180, 
+                price: 2.50,
+                emoji: '🥚'
+            },
             salad: { 
                 qty: 0, 
                 protein: 1, 
                 carbs: 5, 
                 fat: 0.5, 
                 calories: 25, 
-                price: 2.00,
+                price: 1.50,
                 emoji: '🥬'
             },
             frite: { 
@@ -1360,13 +1420,33 @@
                 carbs: 8, 
                 fat: 3, 
                 calories: 65, 
-                price: 2.50,
+                price: 1.50,
                 emoji: '🍟'
             }
         };
 
         function updateIngredient(type, change) {
-            ingredients[type].qty = Math.max(0, ingredients[type].qty + change);
+            const newQty = Math.max(0, ingredients[type].qty + change);
+            
+            // Validation: Max 3 carb units
+            if ((type === 'rice' || type === 'borghol') && change > 0) {
+                const totalCarbs = ingredients.rice.qty + ingredients.borghol.qty;
+                if (totalCarbs >= 3) {
+                    alert('⚠️ Maximum 3 carb units allowed per meal!');
+                    return;
+                }
+            }
+            
+            // Validation: Minimum 1 protein unit (prevent removing last protein)
+            if ((type === 'scallop' || type === 'cuisse' || type === 'eggs' || type === 'omelette') && change < 0) {
+                const totalProteins = ingredients.scallop.qty + ingredients.cuisse.qty + ingredients.eggs.qty + ingredients.omelette.qty;
+                if (totalProteins === 1 && ingredients[type].qty === 1) {
+                    alert('⚠️ At least 1 protein unit required in your meal!');
+                    return;
+                }
+            }
+            
+            ingredients[type].qty = newQty;
             document.getElementById(`qty-${type}`).textContent = ingredients[type].qty;
             
             // Update individual ingredient price
@@ -1374,7 +1454,6 @@
             document.getElementById(`price-${type}`).textContent = itemPrice + ' TND';
             
             // Add color feedback to button
-            const buttons = event.target.closest('.ingredient-controls').querySelectorAll('.control-btn');
             if (change > 0) {
                 event.target.classList.add('add-feedback');
                 setTimeout(() => event.target.classList.remove('add-feedback'), 400);
@@ -1394,7 +1473,6 @@
             animateMeal();
             updateItemCount();
             updateButtonStates();
-            updateProgressBars();
         }
 
         function updateTotals() {
@@ -1414,10 +1492,11 @@
                 totalPrice += ing.price * ing.qty;
                 
                 // Calculate weight
-                if (key === 'rice') totalWeight += 50 * ing.qty;
+                if (key === 'rice' || key === 'borghol') totalWeight += 50 * ing.qty;
                 else if (key === 'scallop') totalWeight += 100 * ing.qty;
                 else if (key === 'cuisse') totalWeight += 150 * ing.qty;
                 else if (key === 'eggs') totalWeight += 50 * ing.qty;
+                else if (key === 'omelette') totalWeight += 150 * ing.qty;
                 else if (key === 'salad' || key === 'frite') totalWeight += 100 * ing.qty;
             }
 
@@ -1453,8 +1532,13 @@
 
         function updateButtonStates() {
             const hasItems = Object.values(ingredients).some(ing => ing.qty > 0);
-            document.getElementById('buyBtn').disabled = !hasItems;
-            document.getElementById('saveBtn').disabled = !hasItems;
+            const totalProteins = ingredients.scallop.qty + ingredients.cuisse.qty + ingredients.eggs.qty + ingredients.omelette.qty;
+            const hasMinProtein = totalProteins >= 1;
+            
+            // Enable buttons only if meal has items AND at least 1 protein
+            const canOrder = hasItems && hasMinProtein;
+            document.getElementById('buyBtn').disabled = !canOrder;
+            document.getElementById('saveBtn').disabled = !canOrder;
         }
 
         function clearMeal() {
@@ -1472,7 +1556,6 @@
                 animateMeal();
                 updateItemCount();
                 updateButtonStates();
-                updateProgressBars();
             }
         }
 
@@ -1536,7 +1619,7 @@
             }
 
             // Add ingredients in realistic plating order: rice base, then proteins, then vegetables
-            const platingOrder = ['rice', 'scallop', 'cuisse', 'eggs', 'salad', 'frite'];
+            const platingOrder = ['rice', 'borghol', 'scallop', 'cuisse', 'eggs', 'omelette', 'salad', 'frite'];
             
             for (let key of platingOrder) {
                 const ing = ingredients[key];
@@ -1590,7 +1673,6 @@
             animateMeal();
             updateItemCount();
             updateButtonStates();
-            updateProgressBars();
 
             // Scroll to summary on mobile
             if (window.innerWidth < 1200) {
@@ -1616,6 +1698,13 @@
             
             if (parseFloat(totalPrice) === 0) {
                 alert('Please add ingredients to your meal!');
+                return;
+            }
+
+            // Validation: Check minimum protein requirement
+            const totalProteins = ingredients.scallop.qty + ingredients.cuisse.qty + ingredients.eggs.qty + ingredients.omelette.qty;
+            if (totalProteins === 0) {
+                alert('⚠️ Please add at least 1 protein to your meal!');
                 return;
             }
 
@@ -1674,6 +1763,13 @@
                 return;
             }
 
+            // Validation: Check minimum protein requirement
+            const totalProteins = ingredients.scallop.qty + ingredients.cuisse.qty + ingredients.eggs.qty + ingredients.omelette.qty;
+            if (totalProteins === 0) {
+                alert('⚠️ Please add at least 1 protein to your meal!');
+                return;
+            }
+
             const mealDescription = getMealDescription();
             const mealData = {
                 ingredients: JSON.parse(JSON.stringify(ingredients)),
@@ -1703,7 +1799,6 @@
         animateMeal();
         updateItemCount();
         updateButtonStates();
-        updateProgressBars();
 
         // Initialize all ingredient prices
         for (let key in ingredients) {
