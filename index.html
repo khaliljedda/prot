@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>prot.tn - Protein House</title>
     <style>
         * {
@@ -11,36 +14,56 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
             padding: 20px;
             color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+            overflow: visible;
         }
 
         header {
-            text-align: center;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             margin-bottom: 30px;
-            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             position: relative;
         }
 
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        header p {
+            display: none;
+        }
+
         .language-selector {
-            position: absolute;
-            top: 0;
-            right: 0;
             display: flex;
             gap: 10px;
-            background: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .lang-btn {
@@ -65,95 +88,216 @@
             border-color: #000;
         }
 
-        header h1 {
-            font-size: 3.5em;
-            font-weight: 300;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            color: #000;
+        .basket-header-icon {
+            background: #000;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2em;
+            font-weight: 700;
         }
 
-        header p {
-            font-size: 1.2em;
-            font-weight: 300;
-            color: #666;
+        .basket-header-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .basket-badge {
+            background: white;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 2-Column Layout: 70% Left / 30% Right */
+        .page-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        @media (max-width: 1200px) {
+            .page-layout {
+                grid-template-columns: 1fr;
+            }
         }
 
         .main-content {
-            display: grid;
-            grid-template-columns: 1fr 450px;
-            gap: 30px;
-            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .builder-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
 
         .meal-summary {
             background: white;
-            border-radius: 20px;
-            padding: 35px;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             position: sticky;
+            position: -webkit-sticky; /* Safari support */
             top: 20px;
             height: fit-content;
-            transform: scale(1.02);
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc white;
             z-index: 10;
+            transition: box-shadow 0.3s ease;
         }
 
-        .meal-photo-container {
-            width: 100%;
-            min-height: 280px;
-            background: linear-gradient(145deg, #2c2c2c 0%, #1a1a1a 100%);
-            border-radius: 10px;
+        /* Enhanced shadow when scrolling */
+        .meal-summary.is-stuck {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .meal-summary h2 {
+            font-size: 1.3em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-bottom: 20px;
+            text-align: center;
+            color: #000;
+        }
+
+        .meal-summary::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .meal-summary::-webkit-scrollbar-track {
+            background: white;
+            border-radius: 10px;
+        }
+
+        .meal-summary::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        .meal-summary::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        .meal-ingredients-list {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f8f9fa;
+        }
+
+        .meal-ingredients-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .meal-ingredients-list::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .meal-ingredients-list::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        .meal-ingredients-list::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        .meal-ingredients-list h3 {
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meal-ingredient-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 30px;
-            overflow: auto;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            gap: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
         }
 
-        .meal-photo {
-            width: 260px;
-            height: 260px;
-            background: radial-gradient(circle, #ffffff 0%, #f5f5f5 60%, #e0e0e0 100%);
-            border-radius: 50%;
+        .meal-ingredient-item:hover {
+            border-color: #000;
+            transform: translateX(2px);
+        }
+
+        .meal-ingredient-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .meal-ingredient-info {
+            flex: 1;
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            align-items: center;
-            padding: 25px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.5);
-            position: relative;
-            border: 8px solid #e8e8e8;
+            flex-direction: column;
+            gap: 2px;
         }
 
-        .meal-photo::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            border-radius: 50%;
-            border: 1px solid rgba(200,200,200,0.3);
+        .meal-ingredient-name {
+            font-weight: 600;
+            font-size: 0.95em;
+            color: #333;
         }
 
-        .meal-ingredient-icon {
-            font-size: 2.2em;
-            animation: popIn 0.3s ease;
-            transition: transform 0.2s ease;
-            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
-            position: relative;
-            z-index: 1;
+        .meal-ingredient-details {
+            font-size: 0.85em;
+            color: #666;
         }
 
-        .meal-ingredient-icon:hover {
-            transform: scale(1.15) rotate(-5deg);
-            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.3));
+        .meal-ingredient-quantity {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #000;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .empty-meal-list {
+            text-align: center;
+            padding: 30px 20px;
+            color: #999;
+        }
+
+        .empty-meal-list-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            opacity: 0.3;
         }
 
         @keyframes popIn {
@@ -193,18 +337,7 @@
         }
 
         .meal-items-count {
-            text-align: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .meal-items-count strong {
-            color: #000;
-            font-size: 1.2em;
+            display: none;
         }
 
         .loading-spinner {
@@ -290,15 +423,15 @@
         }
 
         .progress-bar-fill.protein-bar {
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            background: linear-gradient(90deg, #333, #1a1a1a);
         }
 
         .progress-bar-fill.calorie-bar {
-            background: linear-gradient(90deg, #f87171, #ef4444);
+            background: linear-gradient(90deg, #666, #333);
         }
 
         .progress-bar-fill.weight-bar {
-            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            background: linear-gradient(90deg, #999, #666);
         }
 
         .mobile-sticky-bar {
@@ -308,38 +441,43 @@
             left: 0;
             right: 0;
             background: white;
-            padding: 15px 20px;
+            padding: 12px 15px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
             box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
             z-index: 1000;
             border-top: 2px solid #e0e0e0;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         .mobile-sticky-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
+            gap: 12px;
             max-width: 600px;
             margin: 0 auto;
         }
 
         .mobile-price {
-            font-size: 1.5em;
+            font-size: 1.4em;
             font-weight: bold;
+            line-height: 1.2;
         }
 
         .mobile-protein {
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #666;
+            line-height: 1.3;
         }
 
         .mobile-protein strong {
             color: #000;
-            font-size: 1.2em;
+            font-size: 1.1em;
         }
 
         .mobile-cta {
-            padding: 12px 20px;
+            padding: 12px 18px;
             background: #000;
             color: white;
             border: none;
@@ -347,27 +485,38 @@
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
+            font-size: 0.95em;
+            min-width: 100px;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-cta:active {
+            background: #333;
+            transform: scale(0.98);
         }
 
         .price-display {
             background: #000;
-            padding: 20px;
+            padding: 25px 20px;
             border-radius: 10px;
             text-align: center;
             margin-bottom: 20px;
         }
 
         .price-display .label {
-            font-size: 1em;
+            font-size: 0.9em;
             color: #fff;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .price-display .value {
-            font-size: 3em;
-            font-weight: bold;
+            font-size: 3.5em;
+            font-weight: 700;
             color: white;
+            line-height: 1;
         }
 
         .macro-highlights {
@@ -388,13 +537,13 @@
         }
 
         .macro-card.protein {
-            background: linear-gradient(135deg, #fff5e6 0%, #ffffff 100%);
-            border-color: #ffd699;
+            background: #fafafa;
+            border-color: #000;
         }
 
         .macro-card.calories {
-            background: linear-gradient(135deg, #ffe6e6 0%, #ffffff 100%);
-            border-color: #ffb3b3;
+            background: #fafafa;
+            border-color: #000;
         }
 
         .macro-card .label {
@@ -438,35 +587,25 @@
         }
 
         .meal-quantity {
-            margin-bottom: 20px;
+            display: none;
         }
 
         .meal-quantity label {
-            display: block;
-            margin-bottom: 15px;
-            font-weight: 600;
-            color: #333;
-            text-align: center;
+            display: none;
         }
 
         .meal-quantity-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
+            display: none;
         }
 
         .meal-quantity-btn {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border: 2px solid #000;
             border-radius: 50%;
             background: #fff;
             color: #000;
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -500,25 +639,59 @@
         }
 
         .meal-quantity-display {
-            font-size: 2.5em;
+            font-size: 1.5em;
             font-weight: bold;
-            min-width: 60px;
+            min-width: 40px;
             text-align: center;
             color: #000;
             background: #fff;
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 8px;
         }
 
         .cart-section {
-            background: #fff;
+            background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-top: 25px;
+            margin-bottom: 0;
+            min-height: 200px;
             max-height: 400px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc white;
+        }
+
+        .cart-section::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cart-section::-webkit-scrollbar-track {
+            background: white;
+            border-radius: 10px;
+        }
+
+        .cart-section::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        .cart-section::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        .current-order-section {
+            padding-bottom: 20px;
+            margin-bottom: 0;
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+            margin: 30px 0;
+            border-radius: 2px;
         }
 
         .cart-header {
@@ -531,10 +704,13 @@
         }
 
         .cart-header h3 {
-            font-size: 1.2em;
-            font-weight: 600;
+            font-size: 1.3em;
+            font-weight: 700;
             color: #000;
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .cart-badge {
@@ -553,11 +729,18 @@
         .cart-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+
+        .cart-item:hover {
+            border-color: #000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .cart-item-info {
@@ -569,7 +752,7 @@
             font-weight: 600;
             color: #000;
             margin-bottom: 5px;
-            font-size: 1em;
+            font-size: 0.95em;
         }
 
         .cart-item-details {
@@ -587,7 +770,7 @@
         .cart-item-price {
             font-weight: bold;
             color: #000;
-            min-width: 70px;
+            min-width: 80px;
             text-align: right;
             font-size: 1.1em;
         }
@@ -612,7 +795,7 @@
         }
 
         .cart-remove-btn {
-            background: #ef4444;
+            background: #666;
             color: white;
             border: none;
             border-radius: 5px;
@@ -623,7 +806,7 @@
         }
 
         .cart-remove-btn:hover {
-            background: #dc2626;
+            background: #333;
         }
 
         .action-buttons {
@@ -655,7 +838,7 @@
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: #333;
+            background: #1a1a1a;
             transform: translateY(-2px);
         }
 
@@ -666,7 +849,8 @@
         }
 
         .btn-secondary:hover:not(:disabled) {
-            background: #f5f5f5;
+            background: #000;
+            color: white;
             transform: translateY(-2px);
         }
 
@@ -684,38 +868,32 @@
             border-color: #000;
         }
 
-        .builder-section {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-            opacity: 0.95;
-        }
 
+        /* Hero Section - Rich Media Quick Select Cards */
         .quick-meals-section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .quick-meals-section h2 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            color: #000;
-            font-weight: 300;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            color: #666;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 0.5px;
         }
 
         .quick-meals-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
 
         .quick-meal-card {
             background: #fff;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
-            padding: 20px;
+            overflow: hidden;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -728,26 +906,50 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
+        .quick-meal-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .quick-meal-content {
+            padding: 12px;
+        }
+
+        .quick-meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
         .quick-meal-card h3 {
-            font-size: 1.3em;
-            margin-bottom: 12px;
+            font-size: 0.95em;
             color: #000;
             font-weight: 600;
+            margin: 0;
+        }
+
+        .quick-meal-price {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #000;
         }
 
         .quick-meal-card .meal-description {
-            font-size: 0.9em;
+            font-size: 0.75em;
             color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            flex: 1;
+            line-height: 1.4;
+            margin-bottom: 8px;
         }
 
         .quick-meal-card .meal-nutrition {
-            font-size: 0.85em;
-            color: #333;
-            padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
+            font-size: 0.7em;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
         }
 
         .quick-meal-card .meal-nutrition strong {
@@ -758,37 +960,35 @@
             font-size: 1.8em;
             margin-bottom: 25px;
             color: #000;
-            font-weight: 300;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
+            letter-spacing: 1px;
         }
 
         .ingredient-category {
-            margin-bottom: 35px;
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid #e9ecef;
+            margin-bottom: 30px;
         }
 
         .category-title {
-            font-size: 1.4em;
+            font-size: 1.3em;
             color: #000;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #dee2e6;
+            gap: 10px;
         }
 
         .ingredient-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .ingredient-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .ingredient-card {
@@ -807,17 +1007,20 @@
         }
 
         .ingredient-card.highlight {
-            animation: highlightPulse 0.5s ease;
+            animation: highlightPulse 0.6s ease 3;
+            border-color: #000 !important;
         }
 
         @keyframes highlightPulse {
             0%, 100% {
                 background: #fff;
                 transform: scale(1);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
             50% {
-                background: #f0f0f0;
-                transform: scale(1.02);
+                background: #f5f5f5;
+                transform: scale(1.03);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
             }
         }
 
@@ -852,11 +1055,24 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .ingredient-unit {
             font-size: 0.9em;
             color: #666;
+        }
+
+        .ingredient-price-badge {
+            display: none;
+            background: #000;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            white-space: nowrap;
         }
 
         .info-icon {
@@ -973,6 +1189,7 @@
             gap: 10px;
         }
 
+        /* Modern Control Buttons */
         .control-btn {
             width: 42px;
             height: 42px;
@@ -1002,6 +1219,64 @@
             transform: scale(0.95);
         }
 
+        /* Compact mobile controls */
+        .ingredient-controls-compact {
+            display: none;
+            width: 100%;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .compact-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            background: #000;
+            color: #fff;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .compact-btn:active {
+            transform: scale(0.9);
+        }
+
+        .compact-btn.remove-btn {
+            background: #666;
+        }
+
+        .compact-btn.add-btn {
+            background: #000;
+        }
+
+        .quantity-badge {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #000;
+            min-width: 30px;
+            text-align: center;
+            background: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
         .control-btn.add-feedback {
             animation: addGlow 0.4s ease;
         }
@@ -1015,10 +1290,10 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             }
             50% {
-                box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
-                background: #22c55e;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+                background: #000;
                 color: white;
-                border-color: #22c55e;
+                border-color: #000;
             }
         }
 
@@ -1027,10 +1302,10 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             }
             50% {
-                box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
-                background: #ef4444;
+                box-shadow: 0 0 20px rgba(102, 102, 102, 0.8);
+                background: #666;
                 color: white;
-                border-color: #ef4444;
+                border-color: #666;
             }
         }
 
@@ -1088,79 +1363,894 @@
             line-height: 1.6;
         }
 
+        /* Tablet and smaller desktop */
         @media (max-width: 1200px) {
-            .main-content {
+            .page-layout {
                 grid-template-columns: 1fr;
             }
 
             .meal-summary {
-                position: relative;
-                top: 0;
+                position: relative !important;
+                top: 0 !important;
+                max-height: none !important;
                 order: -1;
+                margin-bottom: 20px;
+            }
+
+            .quick-meals-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
             }
         }
 
+        /* Tablet */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            body {
+                padding: 15px;
+            }
+
+            .ingredient-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            .quick-meals-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ingredient-image {
+                height: 140px;
+            }
+
+            .ingredient-header {
+                padding: 10px;
+            }
+
+            .ingredient-price-badge {
+                display: block;
+                font-size: 0.9em;
+                padding: 5px 10px;
+            }
+
+            .ingredient-name {
+                font-size: 0.95em;
+            }
+
+            .ingredient-controls-compact {
+                display: flex;
+                padding: 8px;
+                margin: 0 8px 8px 8px;
+            }
+
+            .ingredient-card-footer {
+                display: none;
+            }
+
+            .compact-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 1.2em;
+            }
+
+            .quantity-badge {
+                font-size: 1.05em;
+            }
+        }
+
+        /* Mobile */
         @media (max-width: 768px) {
+            body {
+                padding: 8px;
+                padding-bottom: calc(90px + env(safe-area-inset-bottom));
+            }
+
+            header {
+                padding: 10px 8px;
+                margin-bottom: 12px;
+            }
+
+            header h1 {
+                font-size: 1.4em;
+                letter-spacing: 2px;
+                margin-bottom: 8px;
+            }
+
             .language-selector {
                 position: relative;
-                margin: 0 auto 20px;
+                margin: 0 auto 12px;
+                flex-wrap: wrap;
+                gap: 6px;
+                padding: 8px 12px;
             }
 
             .lang-btn {
                 padding: 6px 12px;
                 font-size: 0.85em;
+                min-width: 55px;
             }
 
-            header h1 {
-                font-size: 2em;
-                letter-spacing: 4px;
+            .builder-section {
+                padding: 15px;
             }
 
             .meals-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .quick-meals-section {
+                margin-bottom: 15px;
+            }
+
+            .quick-meals-section h2 {
+                font-size: 1em;
+                margin-bottom: 10px;
+                color: #666;
             }
 
             .quick-meals-grid {
                 grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .quick-meal-image {
+                height: 120px;
+            }
+
+            .quick-meal-content {
+                padding: 10px;
+            }
+
+            .quick-meal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .quick-meal-card h3 {
+                font-size: 0.9em;
+            }
+
+            .quick-meal-price {
+                font-size: 1em;
+            }
+
+            .quick-meal-card {
+                padding: 10px;
+            }
+
+            .quick-meal-card h3 {
+                font-size: 0.9em;
+                margin-bottom: 6px;
+            }
+
+            .quick-meal-card .meal-description {
+                font-size: 0.7em;
+                margin-bottom: 8px;
+            }
+
+            .quick-meal-card .meal-nutrition {
+                font-size: 0.65em;
+                padding-top: 8px;
+            }
+
+            .ingredients-section h2 {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+            }
+
+            .ingredient-category {
+                margin-bottom: 20px;
+                padding: 15px;
+            }
+
+            .category-title {
+                font-size: 1.1em;
+                margin-bottom: 12px;
+                padding-bottom: 10px;
             }
 
             .macro-highlights {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
             }
 
+            .macro-card {
+                padding: 12px;
+            }
+
+            .macro-card .label {
+                font-size: 0.8em;
+                margin-bottom: 5px;
+            }
+
+            .macro-card .value {
+                font-size: 1.8em;
+            }
+
+            /* KEY CHANGE: Show 2 ingredients per row on mobile */
             .ingredient-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .ingredient-card {
+                margin-bottom: 0;
+            }
+
+            /* Reduce image height to fit more on screen */
+            .ingredient-image {
+                height: 100px;
+            }
+
+            .ingredient-header {
+                padding: 8px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+
+            .ingredient-title-section {
+                order: 2;
+            }
+
+            .ingredient-price-badge {
+                display: block;
+                order: 1;
+                text-align: center;
+                font-size: 0.85em;
+                padding: 4px 8px;
+            }
+
+            .ingredient-name {
+                font-size: 0.8em;
+                margin-bottom: 2px;
+            }
+
+            .ingredient-unit {
+                font-size: 0.7em;
+            }
+
+            .info-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 0.75em;
+            }
+
+            .ingredient-nutrition-compact {
+                padding: 8px;
+                font-size: 0.75em;
+                gap: 6px;
+                margin: 8px 10px;
+            }
+
+            /* Mobile: Hide desktop footer, show compact controls */
+            .ingredient-card-footer {
+                display: none;
+            }
+
+            .ingredient-controls-compact {
+                display: flex;
+                padding: 8px;
+                margin: 0 8px 8px 8px;
+            }
+
+            .compact-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1.2em;
+            }
+
+            .quantity-badge {
+                font-size: 1em;
+                padding: 4px 10px;
+            }
+
+            .ingredient-content {
+                padding: 10px;
             }
 
             .meal-photo-container {
-                min-height: 180px;
+                min-height: 120px;
+                padding: 12px;
             }
 
             .meal-photo {
-                width: 200px;
-                height: 200px;
+                width: 150px;
+                height: 150px;
+                padding: 15px;
+            }
+
+            .meal-ingredient-icon {
+                font-size: 1.8em;
             }
 
             .control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.3em;
+                min-width: 40px;
+                min-height: 40px;
+            }
+
+            .quantity-display {
+                font-size: 1.2em;
+                min-width: 30px;
+                padding: 3px 8px;
+            }
+
+            .meal-summary {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .meal-summary h2 {
+                font-size: 1.2em;
+                margin-bottom: 12px;
+            }
+
+            .price-display {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .price-display .label {
+                font-size: 0.9em;
+                margin-bottom: 3px;
+            }
+
+            .price-display .value {
+                font-size: 2.2em;
+            }
+
+            .other-macros {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .other-macros h3 {
+                font-size: 0.85em;
+                margin-bottom: 8px;
+            }
+
+            .macro-row {
+                padding: 6px 0;
+                font-size: 0.9em;
+            }
+
+            .meal-items-count {
+                padding: 12px;
+                margin-bottom: 15px;
+                font-size: 0.85em;
+            }
+
+            .meal-quantity {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .meal-quantity label {
+                font-size: 0.95em;
+                margin-bottom: 12px;
+            }
+
+            .meal-quantity-controls {
+                padding: 12px;
+            }
+
+            .meal-quantity-btn {
                 width: 45px;
                 height: 45px;
-                font-size: 1.4em;
+                font-size: 1.6em;
+            }
+
+            .meal-quantity-display {
+                font-size: 2em;
+                padding: 8px 15px;
+            }
+
+            .quantity-controls {
+                gap: 12px;
+            }
+
+            .quantity-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 1.2em;
+            }
+
+            #mealCount {
+                font-size: 1.1em;
+                width: 55px;
+                padding: 6px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 12px 18px;
+                font-size: 0.95em;
+                width: 100%;
+            }
+
+            .category-section {
+                margin-bottom: 20px;
+            }
+
+            .category-header {
+                font-size: 1.1em;
+                padding: 10px 12px;
+                margin-bottom: 12px;
             }
 
             .mobile-sticky-bar {
                 display: block;
             }
 
-            body {
-                padding-bottom: 90px;
+            .modal-content {
+                width: 90%;
+                max-width: 90%;
+                padding: 20px 15px;
+                margin: 15px;
+                max-height: 90vh;
+                overflow-y: auto;
             }
 
-            .main-content {
-                grid-template-columns: 1fr;
+            .modal-content h2 {
+                font-size: 1.2em;
+                margin-bottom: 12px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+            }
+
+            .form-group input {
+                padding: 10px;
+                font-size: 0.95em;
+            }
+
+            .cart-section {
+                margin-bottom: 15px;
+                padding: 15px;
+                max-height: 350px;
+            }
+
+            .cart-item {
+                padding: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .cart-item-info {
+                width: 100%;
+            }
+
+            .cart-item-name {
+                font-size: 0.9em;
+                margin-bottom: 3px;
+            }
+
+            .cart-item-details {
+                font-size: 0.75em;
+            }
+
+            .cart-item-controls {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .cart-item-price {
+                font-size: 1em;
+            }
+
+            .cart-remove-btn {
+                padding: 5px 10px;
+                font-size: 0.85em;
+            }
+
+            .cart-total {
+                padding: 12px;
+                font-size: 1em;
+            }
+
+            .cart-total h3 {
+                font-size: 1.1em;
+            }
+
+            .cart-total-price {
+                font-size: 1.3em;
+            }
+        }
+
+        /* Small mobile */
+        @media (max-width: 480px) {
+            body {
+                padding: 6px;
+                padding-bottom: calc(85px + env(safe-area-inset-bottom));
+            }
+
+            header {
+                padding: 8px 6px;
+            }
+
+            header h1 {
+                font-size: 1.2em;
+                letter-spacing: 1px;
+                margin-bottom: 6px;
+            }
+
+            header p {
+                font-size: 0.9em;
+            }
+
+            .language-selector {
+                padding: 6px 10px;
+                gap: 5px;
+            }
+
+            .lang-btn {
+                padding: 5px 8px;
+                font-size: 0.75em;
+                min-width: 45px;
+            }
+
+            .builder-section {
+                padding: 12px;
+            }
+
+            .quick-meals-section h2 {
+                font-size: 0.95em;
+                margin-bottom: 8px;
+                color: #666;
+            }
+
+            .quick-meal-card {
+                padding: 8px;
+            }
+
+            .quick-meal-card h3 {
+                font-size: 0.85em;
+                margin-bottom: 5px;
+            }
+
+            .quick-meal-card .meal-description {
+                font-size: 0.65em;
+                margin-bottom: 6px;
+            }
+
+            .quick-meal-card .meal-nutrition {
+                font-size: 0.6em;
+                padding-top: 6px;
+            }
+
+            .ingredients-section h2 {
+                font-size: 1.15em;
+                margin-bottom: 12px;
+            }
+
+            .ingredient-category {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .category-title {
+                font-size: 1em;
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+            }
+
+            /* Keep 2 columns even on small mobile */
+            .ingredient-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .ingredient-image {
+                height: 90px;
+            }
+
+            .ingredient-header {
+                padding: 6px;
+            }
+
+            .ingredient-price-badge {
+                font-size: 0.8em;
+                padding: 3px 6px;
+            }
+
+            .ingredient-name {
+                font-size: 0.75em;
+                margin-bottom: 2px;
+            }
+
+            .ingredient-unit {
+                font-size: 0.65em;
+            }
+
+            .info-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 0.7em;
+            }
+
+            .ingredient-nutrition-compact {
+                padding: 6px;
+                font-size: 0.7em;
+                gap: 5px;
+                margin: 6px 8px;
+            }
+
+            .ingredient-controls-compact {
+                padding: 6px;
+                margin: 0 6px 6px 6px;
+            }
+
+            .compact-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1.1em;
+            }
+
+            .quantity-badge {
+                font-size: 0.95em;
+                padding: 3px 8px;
+            }
+
+            .control-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1.2em;
+                min-width: 36px;
+                min-height: 36px;
+            }
+
+            .quantity-display {
+                font-size: 1.1em;
+                min-width: 28px;
+                padding: 2px 6px;
+            }
+
+            .meal-photo-container {
+                min-height: 100px;
+                padding: 10px;
+            }
+
+            .meal-photo {
+                width: 130px;
+                height: 130px;
+                padding: 12px;
+            }
+
+            .meal-ingredient-icon {
+                font-size: 1.5em;
             }
 
             .meal-summary {
-                transform: scale(1);
+                padding: 12px;
+            }
+
+            .price-display {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            .price-display .label {
+                font-size: 0.85em;
+            }
+
+            .price-display .value {
+                font-size: 1.9em;
+            }
+
+            .macro-highlights {
+                gap: 6px;
+            }
+
+            .macro-card {
+                padding: 10px;
+            }
+
+            .macro-card .label {
+                font-size: 0.75em;
+            }
+
+            .macro-card .value {
+                font-size: 1.6em;
+            }
+
+            .other-macros {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            .other-macros h3 {
+                font-size: 0.8em;
+                margin-bottom: 6px;
+            }
+
+            .macro-row {
+                padding: 5px 0;
+                font-size: 0.85em;
+            }
+
+            .meal-items-count {
+                padding: 10px;
+                margin-bottom: 12px;
+                font-size: 0.8em;
+            }
+
+            .meal-quantity {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            .meal-quantity label {
+                font-size: 0.9em;
+                margin-bottom: 10px;
+            }
+
+            .meal-quantity-controls {
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .meal-quantity-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.5em;
+            }
+
+            .meal-quantity-display {
+                font-size: 1.8em;
+                padding: 6px 12px;
+            }
+
+            .cart-section {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .cart-header h3 {
+                font-size: 1em;
+            }
+
+            .cart-badge {
+                width: 24px;
+                height: 24px;
+                font-size: 0.8em;
+            }
+
+            .btn {
+                padding: 11px 16px;
+                font-size: 0.9em;
+            }
+
+            .modal-content {
+                padding: 15px 12px;
+            }
+
+            .modal-content h2 {
+                font-size: 1.1em;
+            }
+
+            .mobile-sticky-bar {
+                padding: 10px 12px;
+            }
+
+            .mobile-price {
+                font-size: 1.3em;
+            }
+
+            .mobile-protein {
+                font-size: 0.8em;
+            }
+
+            .mobile-cta {
+                padding: 10px 15px;
+                font-size: 0.9em;
+                min-width: 90px;
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .meal-photo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .meal-photo-container {
+                min-height: 100px;
+                padding: 10px;
+            }
+
+            /* Show 3 columns in landscape for better space usage */
+            .ingredient-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .ingredient-image {
+                height: 90px;
+            }
+
+            .ingredient-name {
+                font-size: 0.8em;
+            }
+
+            .control-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1.2em;
+            }
+
+            .ingredient-price-display {
+                font-size: 0.85em;
+            }
+
+            .quick-meals-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .control-btn,
+            .btn,
+            .quantity-btn,
+            .lang-btn,
+            .quick-meal-card,
+            .meal-quantity-btn {
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .ingredient-card:hover {
+                transform: none;
+            }
+
+            .ingredient-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+
+            .control-btn:active {
+                transform: scale(0.9);
+            }
+
+            .quick-meal-card:active {
+                transform: translateY(-2px);
+                transition: transform 0.1s ease;
+            }
+
+            /* Better touch targets on mobile */
+            .control-btn {
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Smooth scrolling on iOS */
+            body {
+                -webkit-overflow-scrolling: touch;
             }
         }
 
@@ -1200,57 +2290,97 @@
             color: #666;
             line-height: 1.6;
         }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90%;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .toast {
+                bottom: 110px;
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="language-selector">
-                <button class="lang-btn" onclick="changeLanguage('en')" id="lang-en">🇬🇧 EN</button>
-                <button class="lang-btn" onclick="changeLanguage('fr')" id="lang-fr">🇫🇷 FR</button>
-                <button class="lang-btn active" onclick="changeLanguage('ar')" id="lang-ar">🇹🇳 AR</button>
-            </div>
             <h1>prot.tn</h1>
-            <p id="header-subtitle">Premium Protein House - Build Your Perfect Meal</p>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="lang-btn" onclick="changeLanguage('en')" id="lang-en">🇬🇧 EN</button>
+                    <button class="lang-btn" onclick="changeLanguage('fr')" id="lang-fr">🇫🇷 FR</button>
+                    <button class="lang-btn active" onclick="changeLanguage('ar')" id="lang-ar">🇹🇳 AR</button>
+                </div>
+                <div class="basket-header-icon" onclick="goToBasket()">
+                    🛒
+                    <span class="basket-badge" id="headerBasketCount">0</span>
+                </div>
+            </div>
         </header>
 
-        <div class="main-content">
-            <div class="builder-section">
+        <div class="page-layout">
+            <div class="main-content">
+                <div class="builder-section">
                 <div class="quick-meals-section">
-                    <h2 data-translate="quickMeals">🎯 Quick Select Meals</h2>
+                    <h2 data-translate="quickMeals">⚡ Quick Select Meals</h2>
                     <div class="quick-meals-grid">
                         <div class="quick-meal-card" onclick="selectQuickMeal('scalope')">
-                            <h3 data-translate="mealScalope">Escalope Meal</h3>
-                            <div class="meal-description">
-                                <strong>100g Rice + 100g Escalope + Salad</strong>
-                            </div>
-                            <div class="meal-nutrition">
-                                💪 <strong>32g</strong> Protein | 🔥 <strong>495</strong> kcal | 💰 <strong>13.00</strong> TND
+                            <img src="plat-scaloppe.png" alt="Escalope Meal" class="quick-meal-image">
+                            <div class="quick-meal-content">
+                                <div class="quick-meal-header">
+                                    <h3 data-translate="mealScalope">Escalope Meal</h3>
+                                    <div class="quick-meal-price">13.00 TND</div>
+                                </div>
+                                <div class="meal-description" data-translate="mealScalopeDesc">Rice + Escalope + Salad</div>
+                                <div class="meal-nutrition">
+                                    <span>💪 <strong>32g</strong></span>
+                                    <span>🔥 <strong>495</strong> kcal</span>
+                                </div>
                             </div>
                         </div>
                         <div class="quick-meal-card" onclick="selectQuickMeal('proteinOverdose')">
-                            <h3 data-translate="mealProteinOverdose">Protein Overdose</h3>
-                            <div class="meal-description">
-                                <strong>100g Escalope + 1 Cuisse + 1 Egg + 1 Omelette + 1 Salad</strong>
-                            </div>
-                            <div class="meal-nutrition">
-                                💪 <strong>65g</strong> Protein | 🔥 <strong>555</strong> kcal | 💰 <strong>16.80</strong> TND
-                            </div>
-                        </div>
-                        <div class="quick-meal-card" onclick="selectQuickMeal('balanced')">
-                            <h3 data-translate="mealBalanced">Balanced Meal</h3>
-                            <div class="meal-description">
-                                <strong>100g Rice + 100g Escalope + 2 Eggs + 1 Salad</strong>
-                            </div>
-                            <div class="meal-nutrition">
-                                💪 <strong>44g</strong> Protein | 🔥 <strong>635</strong> kcal | 💰 <strong>14.60</strong> TND
+                            <img src="protein-overdose.png" alt="Protein Overdose" class="quick-meal-image">
+                            <div class="quick-meal-content">
+                                <div class="quick-meal-header">
+                                    <h3 data-translate="mealProteinOverdose">Protein Overdose</h3>
+                                    <div class="quick-meal-price">16.80 TND</div>
+                                </div>
+                                <div class="meal-description" data-translate="mealProteinOverdoseDesc">Escalope + Cuisse + Egg + Omelette + Salad</div>
+                                <div class="meal-nutrition">
+                                    <span>💪 <strong>65g</strong></span>
+                                    <span>🔥 <strong>555</strong> kcal</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="ingredients-section">
-                    <h2 data-translate="buildOwn">🔨 Build Your Own Meal</h2>
+                    <h2 data-translate="buildOwn">👨‍🍳 Cook Your Own Meal</h2>
 
                     <div class="ingredient-category">
                         <div class="category-title" data-translate="carbs">🍚 Carbs</div>
@@ -1258,9 +2388,10 @@
                             <div class="ingredient-card">
                                 <img src="rice.jpeg" alt="Rice" class="ingredient-image">
                                 <div class="ingredient-header">
+                                    <div class="ingredient-price-badge">1.50 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="rice">Rice <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
-                                        <div class="ingredient-unit">50g <span data-translate="perUnit">per unit</span></div>pe
+                                        <div class="ingredient-unit">50g <span data-translate="perUnit">per unit</span></div>
                                     </div>
                                 </div>
                                 <div class="ingredient-nutrition-compact">
@@ -1281,6 +2412,13 @@
                                         <strong>1.50 TND</strong>
                                     </div>
                                 </div>
+                                <div class="ingredient-controls-compact">
+                                    <div class="controls-left">
+                                        <button class="compact-btn remove-btn" onclick="updateIngredient('rice', -1)">−</button>
+                                        <div class="quantity-badge" id="qty-mobile-rice">0</div>
+                                        <button class="compact-btn add-btn" onclick="updateIngredient('rice', 1)">+</button>
+                                    </div>
+                                </div>
                                 <div class="ingredient-card-footer">
                                     <div class="ingredient-price-display">1.50 TND</div>
                                     <div class="ingredient-controls">
@@ -1294,6 +2432,7 @@
                             <div class="ingredient-card">
                                 <img src="borghol.jpg" alt="Borghol" class="ingredient-image">
                                 <div class="ingredient-header">
+                                    <div class="ingredient-price-badge">1.50 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="borghol">Borghol <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">50g <span data-translate="perUnit">per unit</span></div>
@@ -1317,6 +2456,13 @@
                                         <strong>1.50 TND</strong>
                                     </div>
                                 </div>
+                                <div class="ingredient-controls-compact">
+                                    <div class="controls-left">
+                                        <button class="compact-btn remove-btn" onclick="updateIngredient('borghol', -1)">−</button>
+                                        <div class="quantity-badge" id="qty-mobile-borghol">0</div>
+                                        <button class="compact-btn add-btn" onclick="updateIngredient('borghol', 1)">+</button>
+                                    </div>
+                                </div>
                                 <div class="ingredient-card-footer">
                                     <div class="ingredient-price-display">1.50 TND</div>
                                     <div class="ingredient-controls">
@@ -1335,6 +2481,7 @@
                             <div class="ingredient-card">
                                 <img src="escalope.jpg" alt="Escalope" class="ingredient-image">
                                 <div class="ingredient-header">
+                                    <div class="ingredient-price-badge">8.50 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="escalope">Escalope <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">100g <span data-translate="perUnit">per unit</span></div>
@@ -1358,6 +2505,13 @@
                                         <strong>8.50 TND</strong>
                                     </div>
                                 </div>
+                                <div class="ingredient-controls-compact">
+                                    <div class="controls-left">
+                                        <button class="compact-btn remove-btn" onclick="updateIngredient('scallop', -1)">−</button>
+                                        <div class="quantity-badge" id="qty-mobile-scallop">0</div>
+                                        <button class="compact-btn add-btn" onclick="updateIngredient('scallop', 1)">+</button>
+                                    </div>
+                                </div>
                                 <div class="ingredient-card-footer">
                                     <div class="ingredient-price-display">8.50 TND</div>
                                     <div class="ingredient-controls">
@@ -1371,6 +2525,7 @@
                             <div class="ingredient-card">
                                 <img src="cuisse.jpeg" alt="Cuisse" class="ingredient-image">
                                 <div class="ingredient-header">
+                                    <div class="ingredient-price-badge">3.50 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="cuisse">Cuisse (Chicken Thigh) <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">1 <span data-translate="piece">piece</span></div>
@@ -1394,6 +2549,13 @@
                                         <strong>3.50 TND</strong>
                                     </div>
                                 </div>
+                                <div class="ingredient-controls-compact">
+                                    <div class="controls-left">
+                                        <button class="compact-btn remove-btn" onclick="updateIngredient('cuisse', -1)">−</button>
+                                        <div class="quantity-badge" id="qty-mobile-cuisse">0</div>
+                                        <button class="compact-btn add-btn" onclick="updateIngredient('cuisse', 1)">+</button>
+                                    </div>
+                                </div>
                                 <div class="ingredient-card-footer">
                                     <div class="ingredient-price-display">3.50 TND</div>
                                     <div class="ingredient-controls">
@@ -1407,6 +2569,7 @@
                             <div class="ingredient-card">
                                 <img src="egg.jpeg" alt="Eggs" class="ingredient-image">
                                 <div class="ingredient-header">
+                                    <div class="ingredient-price-badge">0.80 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="eggs">Eggs <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">1 <span data-translate="piece">piece</span></div>
@@ -1430,6 +2593,13 @@
                                         <strong>0.80 TND</strong>
                                     </div>
                                 </div>
+                                <div class="ingredient-controls-compact">
+                                    <div class="controls-left">
+                                        <button class="compact-btn remove-btn" onclick="updateIngredient('eggs', -1)">−</button>
+                                        <div class="quantity-badge" id="qty-mobile-eggs">0</div>
+                                        <button class="compact-btn add-btn" onclick="updateIngredient('eggs', 1)">+</button>
+                                    </div>
+                                </div>
                                 <div class="ingredient-card-footer">
                                     <div class="ingredient-price-display">0.80 TND</div>
                                     <div class="ingredient-controls">
@@ -1443,6 +2613,7 @@
                             <div class="ingredient-card">
                                 <img src="omelette.jpeg" alt="Omelette" class="ingredient-image">
                                 <div class="ingredient-header">
+                                    <div class="ingredient-price-badge">2.50 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="omelette">Omelette <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">1 <span data-translate="piece">piece</span> (<span data-translate="eggs3">3 eggs</span>)</div>
@@ -1466,6 +2637,13 @@
                                         <strong>2.50 TND</strong>
                                     </div>
                                 </div>
+                                <div class="ingredient-controls-compact">
+                                    <div class="controls-left">
+                                        <button class="compact-btn remove-btn" onclick="updateIngredient('omelette', -1)">−</button>
+                                        <div class="quantity-badge" id="qty-mobile-omelette">0</div>
+                                        <button class="compact-btn add-btn" onclick="updateIngredient('omelette', 1)">+</button>
+                                    </div>
+                                </div>
                                 <div class="ingredient-card-footer">
                                     <div class="ingredient-price-display">2.50 TND</div>
                                     <div class="ingredient-controls">
@@ -1484,6 +2662,7 @@
                             <div class="ingredient-card">
                                 <img src="salade.jpg" alt="Normal Salad" class="ingredient-image">
                                 <div class="ingredient-header">
+                                    <div class="ingredient-price-badge">1.50 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="normalSalad">Normal Salad <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">100g <span data-translate="perPortion">per portion</span></div>
@@ -1507,6 +2686,13 @@
                                         <strong>1.50 TND</strong>
                                     </div>
                                 </div>
+                                <div class="ingredient-controls-compact">
+                                    <div class="controls-left">
+                                        <button class="compact-btn remove-btn" onclick="updateIngredient('salad', -1)">−</button>
+                                        <div class="quantity-badge" id="qty-mobile-salad">0</div>
+                                        <button class="compact-btn add-btn" onclick="updateIngredient('salad', 1)">+</button>
+                                    </div>
+                                </div>
                                 <div class="ingredient-card-footer">
                                     <div class="ingredient-price-display">1.50 TND</div>
                                     <div class="ingredient-controls">
@@ -1524,7 +2710,7 @@
                         <div class="category-title">🎁 <span data-translate="freeFruit">Free Daily Surprise Fruit</span></div>
                         <div class="ingredient-grid">
                             <div class="ingredient-card">
-                                <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); display: flex; align-items: center; justify-content: center; font-size: 5em;" id="surpriseFruitIcon">🎁</div>
+                                <div style="width: 100%; height: 180px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 5em;" id="surpriseFruitIcon">🎁</div>
                                 <div class="ingredient-header">
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name"><span data-translate="surpriseFruit">Surprise Fruit</span> <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
@@ -1550,10 +2736,10 @@
                                     </div>
                                 </div>
                                 <div class="ingredient-card-footer">
-                                    <div class="ingredient-price-display" style="color: #22c55e; font-weight: bold;">FREE</div>
+                                    <div class="ingredient-price-display" style="color: #000; font-weight: bold;">FREE</div>
                                     <div class="ingredient-controls" style="opacity: 0.5; pointer-events: none;">
                                         <div style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">✓</div>
-                                        <div class="quantity-display" style="color: #22c55e;">1</div>
+                                        <div class="quantity-display" style="color: #000;">1</div>
                                         <div style="width: 42px; height: 42px;"></div>
                                     </div>
                                 </div>
@@ -1562,84 +2748,77 @@
                     </div>
                 </div>
             </div>
+            </div> <!-- end main-content -->
 
             <div class="meal-summary">
-                <div class="meal-photo-container">
-                    <div class="meal-photo" id="mealEmoji">🍽️</div>
-                </div>
+                <div class="current-order-section">
+                    <h2>Your Current Order</h2>
+                    
+                    <div class="meal-ingredients-list" id="mealIngredientsList">
+                        <div class="empty-meal-list">
+                            <div class="empty-meal-list-icon">🍽️</div>
+                            <p>No ingredients added yet</p>
+                        </div>
+                    </div>
 
-                <div class="price-display">
-                    <div class="label" data-translate="totalPrice">Total Price</div>
-                    <div class="value"><span id="totalPrice">0.00</span> TND</div>
-                </div>
+                    <div class="price-display">
+                        <div class="label" data-translate="totalPrice">Total Price</div>
+                        <div class="value"><span id="totalPrice">0.00</span> TND</div>
+                    </div>
 
-                <div class="macro-highlights">
-                    <div class="macro-card protein">
-                        <div class="label" data-translate="protein">💪 Protein</div>
-                        <div class="value"><span id="totalProtein">0</span>g</div>
+                    <div class="macro-highlights">
+                        <div class="macro-card protein">
+                            <div class="label" data-translate="protein">💪 Protein</div>
+                            <div class="value"><span id="totalProtein">0</span>g</div>
+                        </div>
+                        <div class="macro-card calories">
+                            <div class="label" data-translate="calories">🔥 Calories</div>
+                            <div class="value"><span id="totalCalories">0</span></div>
+                        </div>
                     </div>
-                    <div class="macro-card calories">
-                        <div class="label" data-translate="calories">🔥 Calories</div>
-                        <div class="value"><span id="totalCalories">0</span></div>
-                    </div>
-                </div>
 
+                    <div class="other-macros">
+                        <h3 data-translate="nutritionalDetails">Nutritional Details</h3>
+                        <div class="macro-row">
+                            <span data-translate="carbohydrates">Carbohydrates</span>
+                            <strong><span id="totalCarbs">0</span>g</strong>
+                        </div>
+                        <div class="macro-row">
+                            <span data-translate="fats">Fats</span>
+                            <strong><span id="totalFats">0</span>g</strong>
+                        </div>
+                        <div class="macro-row">
+                            <span data-translate="fiber">Fiber (from fruit)</span>
+                            <strong><span id="totalFiber">4</span>g</strong>
+                        </div>
+                    </div>
 
-                <div class="other-macros">
-                    <h3 data-translate="nutritionalDetails">Nutritional Details</h3>
-                    <div class="macro-row">
-                        <span data-translate="carbohydrates">Carbohydrates</span>
-                        <strong><span id="totalCarbs">0</span>g</strong>
+                    <div class="meal-items-count" id="itemsCount">
+                        <strong>0</strong> items in your meal
                     </div>
-                    <div class="macro-row">
-                        <span data-translate="fats">Fats</span>
-                        <strong><span id="totalFats">0</span>g</strong>
-                    </div>
-                    <div class="macro-row">
-                        <span data-translate="fiber">Fiber (from fruit)</span>
-                        <strong><span id="totalFiber">4</span>g</strong>
-                    </div>
-                </div>
 
-                <div class="meal-items-count" id="itemsCount">
-                    <strong>0</strong> items in your meal
-                </div>
+                    <div class="meal-quantity">
+                        <label data-translate="numberOfMeals">Number of Meals</label>
+                        <div class="meal-quantity-controls">
+                            <button class="meal-quantity-btn" onclick="changeMealCount(-1)" id="mealCountDecrease">−</button>
+                            <div class="meal-quantity-display" id="mealCountDisplay">1</div>
+                            <button class="meal-quantity-btn" onclick="changeMealCount(1)" id="mealCountIncrease">+</button>
+                        </div>
+                        <input type="hidden" id="mealCount" value="1" min="1" max="7">
+                    </div>
 
-                <div class="meal-quantity">
-                    <label data-translate="numberOfMeals">Number of Meals</label>
-                    <div class="meal-quantity-controls">
-                        <button class="meal-quantity-btn" onclick="changeMealCount(-1)" id="mealCountDecrease">−</button>
-                        <div class="meal-quantity-display" id="mealCountDisplay">1</div>
-                        <button class="meal-quantity-btn" onclick="changeMealCount(1)" id="mealCountIncrease">+</button>
-                    </div>
-                    <input type="hidden" id="mealCount" value="1" min="1" max="7">
-                </div>
-
-                <div class="cart-section" id="cartSection" style="display: none;">
-                    <div class="cart-header">
-                        <h3 data-translate="cart">Cart</h3>
-                        <div class="cart-badge" id="cartBadge">0</div>
-                    </div>
-                    <div id="cartItems"></div>
-                    <div class="cart-total">
-                        <span data-translate="total">Total:</span>
-                        <span id="cartTotal">0.00 TND</span>
-                    </div>
-                    <div class="action-buttons" style="margin-top: 15px;">
-                        <button class="btn btn-primary" onclick="buyAllFromCart()" id="buyAllBtn" disabled data-translate="buyAll">🛒 Buy All</button>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="addToCartBtn" onclick="addToCart()" disabled data-translate="addToCart">Add to Basket</button>
+                        <button class="btn btn-secondary" id="buyNowBtn" onclick="buyNow()" disabled data-translate="buyNow">Buy Now</button>
+                        <button class="btn btn-clear" onclick="clearMeal()" data-translate="clearAll">Clear</button>
                     </div>
                 </div>
 
-                <div class="action-buttons">
-                    <button class="btn btn-primary" id="addToCartBtn" onclick="addToCart()" disabled data-translate="addToCart">➕ Add to Cart</button>
-                    <button class="btn btn-secondary" id="saveBtn" onclick="saveMeal()" disabled data-translate="saveMeal">💾 Save Meal</button>
-                    <button class="btn btn-clear" onclick="clearMeal()" data-translate="clearAll">🗑️ Clear All</button>
-                </div>
             </div>
-        </div>
+        </div> <!-- end page-layout -->
     </div>
 
-    <div class="modal" id="successModal">
+    <div class="modal" id="successModal" onclick="if(event.target === this) closeModal()">
         <div class="modal-content">
             <h2>✅ Success!</h2>
             <p id="modalMessage">Your action was successful!</p>
@@ -1647,7 +2826,7 @@
         </div>
     </div>
 
-    <div class="modal" id="customerInfoModal">
+    <div class="modal" id="customerInfoModal" onclick="if(event.target === this) closeCustomerModal()">
         <div class="modal-content">
             <h2 data-translate="customerInfo">Customer Information</h2>
             <form id="customerForm" onsubmit="submitOrder(event)">
@@ -1658,7 +2837,7 @@
                 <div style="margin-bottom: 20px; text-align: left;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600;" data-translate="yourPhone">Your Phone Number</label>
                     <input type="tel" id="customerPhone" required pattern="[0-9]{8}" maxlength="8" placeholder="12345678" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em;" oninput="validatePhone(this)" onkeypress="return /[0-9]/.test(event.key)">
-                    <small id="phoneError" style="color: #ef4444; display: none; margin-top: 5px; font-size: 0.85em;" data-translate="phoneError">Phone number must be exactly 8 digits</small>
+                    <small id="phoneError" style="color: #666; display: none; margin-top: 5px; font-size: 0.85em;" data-translate="phoneError">Phone number must be exactly 8 digits</small>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" class="btn btn-primary" style="flex: 1;" data-translate="confirmOrder2">Confirm Order</button>
@@ -1678,6 +2857,8 @@
         </div>
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script>
         // Translation System
         let currentLanguage = 'ar';
@@ -1687,9 +2868,11 @@
                 headerSubtitle: "Premium Protein House - Build Your Perfect Meal",
                 quickMeals: "Quick Select Meals",
                 mealScalope: "Escalope Meal",
+                mealScalopeDesc: "Rice + Escalope + Salad",
                 mealProteinOverdose: "Protein Overdose",
+                mealProteinOverdoseDesc: "Escalope + Cuisse + Egg + Omelette + Salad",
                 mealBalanced: "Balanced Meal",
-                buildOwn: "Build Your Own Meal",
+                buildOwn: "Cook Your Own Meal",
                 proteins: "Proteins",
                 carbs: "Carbs",
                 salads: "Salads",
@@ -1703,7 +2886,6 @@
                 saladeSautee: "Sautéed Salad",
                 perUnit: "per unit",
                 piece: "piece",
-                perPortion: "per portion",
                 perPortion: "per portion",
                 protein: "Protein",
                 carbs: "Carbs",
@@ -1739,6 +2921,10 @@
                 minProteinAlert: "At least 1 protein unit required in your meal!",
                 addIngredientsAlert: "Please add ingredients to your meal!",
                 addProteinAlert: "Please add at least 1 protein to your meal!",
+                mealAddedTitle: "Meal Added!",
+                mealAddedMessage: "Your meal has been successfully added to the basket.",
+                continueShopping: "Continue Shopping",
+                viewBasket: "View Basket",
                 confirmOrder: "Confirm your order?",
                 clearMealConfirm: "Are you sure you want to clear your meal?",
                 mealSavedTitle: "Meal Saved Successfully!",
@@ -1751,19 +2937,24 @@
                 cancel: "Cancel",
                 phoneError: "Phone number must be exactly 8 digits",
                 cart: "Cart",
-                addToCart: "Add to Cart",
+                basket: "Your Basket",
+                addToCart: "Add to Basket",
+                buyNow: "Buy Now",
                 buyAll: "Buy All",
-                emptyCart: "Your cart is empty",
+                emptyCart: "Your basket is empty",
                 remove: "×",
-                total: "Total:"
+                total: "Total:",
+                mealSelected: "selected! Scroll down to modify or add to basket."
             },
             fr: {
                 headerSubtitle: "Maison Premium de Protéines - Créez Votre Repas Parfait",
                 quickMeals: "Repas Rapides",
                 mealScalope: "Repas Escalope",
+                mealScalopeDesc: "Riz + Escalope + Salade",
                 mealProteinOverdose: "Surcharge Protéine",
+                mealProteinOverdoseDesc: "Escalope + Cuisse + Œuf + Omelette + Salade",
                 mealBalanced: "Repas Équilibré",
-                buildOwn: "Créez Votre Propre Repas",
+                buildOwn: "Cuisinez Votre Propre Repas",
                 proteins: "Protéines",
                 carbs: "Glucides",
                 salads: "Salades",
@@ -1777,7 +2968,6 @@
                 saladeSautee: "Salade Sautée",
                 perUnit: "par unité",
                 piece: "pièce",
-                perPortion: "par portion",
                 perPortion: "par portion",
                 protein: "Protéine",
                 carbs: "Glucides",
@@ -1813,6 +3003,10 @@
                 minProteinAlert: "Au moins 1 unité de protéine requise dans votre repas!",
                 addIngredientsAlert: "Veuillez ajouter des ingrédients à votre repas!",
                 addProteinAlert: "Veuillez ajouter au moins 1 protéine à votre repas!",
+                mealAddedTitle: "Repas Ajouté!",
+                mealAddedMessage: "Votre repas a été ajouté au panier avec succès.",
+                continueShopping: "Continuer les Achats",
+                viewBasket: "Voir le Panier",
                 confirmOrder: "Confirmer votre commande?",
                 clearMealConfirm: "Êtes-vous sûr de vouloir effacer votre repas?",
                 mealSavedTitle: "Repas Sauvegardé avec Succès!",
@@ -1825,19 +3019,24 @@
                 cancel: "Annuler",
                 phoneError: "Le numéro de téléphone doit contenir exactement 8 chiffres",
                 cart: "Panier",
+                basket: "Votre Panier",
                 addToCart: "Ajouter au Panier",
+                buyNow: "Acheter Maintenant",
                 buyAll: "Tout Acheter",
                 emptyCart: "Votre panier est vide",
                 remove: "×",
-                total: "Total:"
+                total: "Total:",
+                mealSelected: "sélectionné! Faites défiler pour modifier ou ajouter au panier."
             },
             ar: {
                 headerSubtitle: "بيت البروتين الممتاز - اصنع وجبتك المثالية",
                 quickMeals: "وجبات سريعة",
                 mealScalope: "وجبة إسكالوب",
+                mealScalopeDesc: "أرز + إسكالوب + سلطة",
                 mealProteinOverdose: "وجبة بروتين عالية",
+                mealProteinOverdoseDesc: "إسكالوب + كويس + بيض + أومليت + سلطة",
                 mealBalanced: "وجبة متوازنة",
-                buildOwn: "اصنع وجبتك الخاصة",
+                buildOwn: "اطبخ وجبتك الخاصة",
                 proteins: "البروتينات",
                 carbs: "الكربوهيدرات",
                 salads: "السلطات",
@@ -1851,7 +3050,6 @@
                 saladeSautee: "سلطة مقلية",
                 perUnit: "لكل وحدة",
                 piece: "قطعة",
-                perPortion: "لكل حصة",
                 perPortion: "لكل حصة",
                 protein: "بروتين",
                 carbs: "كربوهيدرات",
@@ -1887,6 +3085,10 @@
                 minProteinAlert: "مطلوب وحدة بروتين واحدة على الأقل في وجبتك!",
                 addIngredientsAlert: "الرجاء إضافة مكونات إلى وجبتك!",
                 addProteinAlert: "الرجاء إضافة بروتين واحد على الأقل إلى وجبتك!",
+                mealAddedTitle: "تمت الإضافة!",
+                mealAddedMessage: "تمت إضافة وجبتك إلى السلة بنجاح.",
+                continueShopping: "مواصلة التسوق",
+                viewBasket: "عرض السلة",
                 confirmOrder: "تأكيد طلبك؟",
                 clearMealConfirm: "هل أنت متأكد من مسح وجبتك؟",
                 mealSavedTitle: "تم حفظ الوجبة بنجاح!",
@@ -1899,11 +3101,14 @@
                 cancel: "إلغاء",
                 phoneError: "يجب أن يكون رقم الهاتف 8 أرقام بالضبط",
                 cart: "السلة",
+                basket: "سلتك",
                 addToCart: "أضف إلى السلة",
+                buyNow: "اشتر الآن",
                 buyAll: "اشتري الكل",
                 emptyCart: "سلتك فارغة",
                 remove: "×",
-                total: "الإجمالي:"
+                total: "الإجمالي:",
+                mealSelected: "تم الاختيار! قم بالتمرير لأسفل للتعديل أو الإضافة للسلة."
             }
         };
 
@@ -1918,9 +3123,12 @@
             // Apply translations
             const t = translations[lang];
             
-            document.getElementById('header-subtitle').textContent = t.headerSubtitle;
-            document.querySelector('[data-translate="quickMeals"]').textContent = '🎯 ' + t.quickMeals;
-            document.querySelector('[data-translate="buildOwn"]').textContent = '🔨 ' + t.buildOwn;
+            // Update header subtitle if it exists
+            const headerSubtitleEl = document.getElementById('header-subtitle');
+            if (headerSubtitleEl) headerSubtitleEl.textContent = t.headerSubtitle;
+            
+            document.querySelector('[data-translate="quickMeals"]').textContent = '⚡ ' + t.quickMeals;
+            document.querySelector('[data-translate="buildOwn"]').textContent = '👨‍🍳 ' + t.buildOwn;
             document.querySelector('[data-translate="proteins"]').textContent = '🍖 ' + t.proteins;
             document.querySelector('[data-translate="carbs"]').textContent = '🍚 ' + t.carbs;
             document.querySelector('[data-translate="salads"]').textContent = '🥗 ' + t.salads;
@@ -1949,14 +3157,26 @@
             const dailyFreeEl = document.querySelector('[data-translate="dailyFree"]');
             if (dailyFreeEl) dailyFreeEl.textContent = t.dailyFree;
             
-            // Update ingredient names
-            document.querySelector('[data-ingredient="escalope"]').textContent = t.escalope;
-            document.querySelector('[data-ingredient="cuisse"]').textContent = t.cuisse;
-            document.querySelector('[data-ingredient="eggs"]').textContent = t.eggs;
-            document.querySelector('[data-ingredient="omelette"]').textContent = t.omelette;
-            document.querySelector('[data-ingredient="rice"]').textContent = t.rice;
-            document.querySelector('[data-ingredient="borghol"]').textContent = t.borghol;
-            document.querySelector('[data-ingredient="normalSalad"]').textContent = t.normalSalad;
+            // Update ingredient names (preserve info icons)
+            const updateIngredientName = (selector, translatedName) => {
+                const el = document.querySelector(selector);
+                if (el) {
+                    const infoIcon = el.querySelector('.info-icon');
+                    if (infoIcon) {
+                        el.innerHTML = translatedName + ' ' + infoIcon.outerHTML;
+                    } else {
+                        el.textContent = translatedName;
+                    }
+                }
+            };
+            
+            updateIngredientName('[data-ingredient="escalope"]', t.escalope);
+            updateIngredientName('[data-ingredient="cuisse"]', t.cuisse);
+            updateIngredientName('[data-ingredient="eggs"]', t.eggs);
+            updateIngredientName('[data-ingredient="omelette"]', t.omelette);
+            updateIngredientName('[data-ingredient="rice"]', t.rice);
+            updateIngredientName('[data-ingredient="borghol"]', t.borghol);
+            updateIngredientName('[data-ingredient="normalSalad"]', t.normalSalad);
             
             // Update unit labels
             document.querySelectorAll('[data-translate="perUnit"]').forEach(el => el.textContent = t.perUnit);
@@ -1980,11 +3200,15 @@
             const leanCleanEl = document.querySelector('[data-translate="leanClean"]');
             if (leanCleanEl) leanCleanEl.textContent = t.leanClean;
             
-            // Update quick meal names
+            // Update quick meal names and descriptions
             const mealScalopeEl = document.querySelector('[data-translate="mealScalope"]');
             if (mealScalopeEl) mealScalopeEl.textContent = t.mealScalope;
+            const mealScalopeDescEl = document.querySelector('[data-translate="mealScalopeDesc"]');
+            if (mealScalopeDescEl) mealScalopeDescEl.textContent = t.mealScalopeDesc;
             const mealProteinOverdoseEl = document.querySelector('[data-translate="mealProteinOverdose"]');
             if (mealProteinOverdoseEl) mealProteinOverdoseEl.textContent = t.mealProteinOverdose;
+            const mealProteinOverdoseDescEl = document.querySelector('[data-translate="mealProteinOverdoseDesc"]');
+            if (mealProteinOverdoseDescEl) mealProteinOverdoseDescEl.textContent = t.mealProteinOverdoseDesc;
             const mealBalancedEl = document.querySelector('[data-translate="mealBalanced"]');
             if (mealBalancedEl) mealBalancedEl.textContent = t.mealBalanced;
             
@@ -2126,7 +3350,13 @@
             }
             
             ingredients[type].qty = newQty;
-            document.getElementById(`qty-${type}`).textContent = ingredients[type].qty;
+            
+            // Update both desktop and mobile displays
+            const desktopQty = document.getElementById(`qty-${type}`);
+            const mobileQty = document.getElementById(`qty-mobile-${type}`);
+            
+            if (desktopQty) desktopQty.textContent = ingredients[type].qty;
+            if (mobileQty) mobileQty.textContent = ingredients[type].qty;
             
             // Add color feedback to button
             if (change > 0) {
@@ -2138,7 +3368,7 @@
             }
             
             // Highlight the ingredient card for visual feedback
-            const card = document.getElementById(`qty-${type}`).closest('.ingredient-card');
+            const card = (desktopQty || mobileQty)?.closest('.ingredient-card');
             if (card) {
                 card.classList.add('highlight');
                 setTimeout(() => card.classList.remove('highlight'), 500);
@@ -2232,11 +3462,29 @@
             
             // Enable buttons only if meal has items AND at least 1 protein
             const canOrder = hasItems && hasMinProtein;
-            document.getElementById('addToCartBtn').disabled = !canOrder;
-            document.getElementById('saveBtn').disabled = !canOrder;
+            const buyNowBtn = document.getElementById('buyNowBtn');
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            
+            if (buyNowBtn) buyNowBtn.disabled = !canOrder;
+            if (addToCartBtn) addToCartBtn.disabled = !canOrder;
         }
 
+        // Load cart from localStorage
         let cart = [];
+        try {
+            const savedCart = localStorage.getItem('cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+        } catch (e) {
+            console.error('Error loading cart:', e);
+            cart = [];
+        }
+        
+        // Function to navigate to basket page
+        function goToBasket() {
+            window.location.href = 'basket.html';
+        }
 
         function addToCart() {
             const t = translations[currentLanguage];
@@ -2269,53 +3517,36 @@
 
             cart.push(meal);
             updateCartDisplay();
-            clearMeal();
+            clearMeal(true); // Skip confirmation when adding to cart
             
-            // Show cart section
-            document.getElementById('cartSection').style.display = 'block';
+            // Show success message with styled modal
+            showAddToCartModal();
         }
 
-        function updateCartDisplay() {
-            const cartItemsEl = document.getElementById('cartItems');
-            const cartBadgeEl = document.getElementById('cartBadge');
-            const cartTotalEl = document.getElementById('cartTotal');
-            const buyAllBtn = document.getElementById('buyAllBtn');
+        function buyNow() {
             const t = translations[currentLanguage];
-
-            cartBadgeEl.textContent = cart.length;
-            
-            if (cart.length === 0) {
-                cartItemsEl.innerHTML = `<div class="empty-cart" data-translate="emptyCart">${t.emptyCart}</div>`;
-                document.getElementById('cartSection').style.display = 'none';
-                buyAllBtn.disabled = true;
+            const totalProteins = ingredients.scallop.qty + ingredients.cuisse.qty + ingredients.eggs.qty + ingredients.omelette.qty;
+            if (totalProteins === 0) {
+                alert('⚠️ ' + t.addProteinAlert);
                 return;
             }
 
-            let totalPrice = 0;
-            let html = '';
+            // Open customer info modal directly for immediate purchase
+            document.getElementById('customerInfoModal').classList.add('active');
+            
+            // Store that this is a direct purchase (not from cart)
+            window.directPurchase = true;
+        }
 
-            cart.forEach((item, index) => {
-                totalPrice += item.price * item.quantity;
-                html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.description}</div>
-                            <div class="cart-item-details">${item.protein}g ${t.proteinLabel} • ${item.calories} ${t.caloriesLabel} • ${t.numberOfMeals}: ${item.quantity}</div>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="control-btn" onclick="updateCartItem(${index}, -1)" style="width: 35px; height: 35px; font-size: 1.2em;">−</button>
-                            <div class="quantity-display" style="min-width: 30px;">${item.quantity}</div>
-                            <button class="control-btn" onclick="updateCartItem(${index}, 1)" style="width: 35px; height: 35px; font-size: 1.2em;">+</button>
-                            <div class="cart-item-price">${(item.price * item.quantity).toFixed(2)} TND</div>
-                            <button class="cart-remove-btn" onclick="removeFromCart(${index})" data-translate="remove">×</button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            cartItemsEl.innerHTML = html;
-            cartTotalEl.textContent = totalPrice.toFixed(2) + ' TND';
-            buyAllBtn.disabled = false;
+        function updateCartDisplay() {
+            // Save cart to localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update header basket count
+            const headerBasketCount = document.getElementById('headerBasketCount');
+            if (headerBasketCount) {
+                headerBasketCount.textContent = cart.length;
+            }
         }
 
         function updateCartItem(index, change) {
@@ -2343,16 +3574,21 @@
             document.getElementById('customerName').focus();
         }
 
-        function clearMeal() {
+        function clearMeal(skipConfirm = false) {
             if (!Object.values(ingredients).some(ing => ing.qty > 0)) {
                 return;
             }
 
             const t = translations[currentLanguage];
-            if (confirm(t.clearMealConfirm)) {
+            
+            // If skipConfirm is true, or user confirms, clear the meal
+            if (skipConfirm || confirm(t.clearMealConfirm)) {
                 for (let key in ingredients) {
                     ingredients[key].qty = 0;
-                    document.getElementById(`qty-${key}`).textContent = 0;
+                    const desktopQty = document.getElementById(`qty-${key}`);
+                    const mobileQty = document.getElementById(`qty-mobile-${key}`);
+                    if (desktopQty) desktopQty.textContent = 0;
+                    if (mobileQty) mobileQty.textContent = 0;
                 }
                 updateTotals();
                 animateMeal();
@@ -2385,10 +3621,12 @@
         }
 
         function animateMeal() {
-            const mealPhoto = document.getElementById('mealEmoji');
-            
-            // Clear current content
-            mealPhoto.innerHTML = '';
+            updateMealIngredientsList();
+        }
+
+        function updateMealIngredientsList() {
+            const listContainer = document.getElementById('mealIngredientsList');
+            const t = translations[currentLanguage];
             
             // Check if meal is empty
             let isEmpty = true;
@@ -2401,55 +3639,90 @@
 
             // Show placeholder if empty
             if (isEmpty) {
-                const emptyContainer = document.createElement('div');
-                emptyContainer.style.textAlign = 'center';
-                
-                const placeholder = document.createElement('div');
-                placeholder.className = 'empty-meal-placeholder';
-                placeholder.textContent = '🍽️';
-                emptyContainer.appendChild(placeholder);
-                
-                const message = document.createElement('div');
-                message.style.color = '#999';
-                message.style.fontSize = '0.9em';
-                message.style.marginTop = '10px';
-                message.textContent = 'Add ingredients to build your meal';
-                emptyContainer.appendChild(message);
-                
-                mealPhoto.appendChild(emptyContainer);
+                listContainer.innerHTML = `
+                    <div class="empty-meal-list">
+                        <div class="empty-meal-list-icon">🍽️</div>
+                        <p>No ingredients added yet</p>
+                    </div>
+                `;
                 return;
             }
 
-            // Add ingredients in realistic plating order: rice base, then proteins, then vegetables
-            const platingOrder = ['rice', 'borghol', 'scallop', 'cuisse', 'eggs', 'omelette', 'salad', 'frite'];
+            // Build ingredient list
+            const ingredientNames = {
+                rice: 'Rice',
+                borghol: 'Borghol',
+                scallop: 'Escalope',
+                cuisse: 'Cuisse',
+                eggs: 'Egg',
+                omelette: 'Omelette',
+                salad: 'Salad',
+                frite: 'Frite'
+            };
+
+            const ingredientImages = {
+                rice: 'rice.jpeg',
+                borghol: 'borghol.jpg',
+                scallop: 'escalope.jpg',
+                cuisse: 'cuisse.jpeg',
+                eggs: 'egg.jpeg',
+                omelette: 'omelette.jpeg',
+                salad: 'salade.jpg',
+                frite: 'cuissed.jpeg'
+            };
+
+            const ingredientWeights = {
+                rice: '50g',
+                borghol: '50g',
+                scallop: '100g',
+                cuisse: '150g',
+                eggs: '50g',
+                omelette: '150g',
+                salad: '100g',
+                frite: '100g'
+            };
+
+            let html = '<h3>Your Ingredients</h3>';
             
-            for (let key of platingOrder) {
+            const order = ['rice', 'borghol', 'scallop', 'cuisse', 'eggs', 'omelette', 'salad', 'frite'];
+            
+            for (let key of order) {
                 const ing = ingredients[key];
-                for (let i = 0; i < ing.qty; i++) {
-                    const icon = document.createElement('div');
-                    icon.className = 'meal-ingredient-icon';
-                    icon.textContent = ing.emoji;
-                    icon.title = key.charAt(0).toUpperCase() + key.slice(1);
-                    mealPhoto.appendChild(icon);
+                if (ing.qty > 0) {
+                    html += `
+                        <div class="meal-ingredient-item">
+                            <img src="${ingredientImages[key]}" alt="${ingredientNames[key]}">
+                            <div class="meal-ingredient-info">
+                                <div class="meal-ingredient-name">${ingredientNames[key]}</div>
+                                <div class="meal-ingredient-details">${ingredientWeights[key]} per unit • ${ing.price.toFixed(2)} TND each</div>
+                            </div>
+                            <div class="meal-ingredient-quantity">×${ing.qty}</div>
+                        </div>
+                    `;
                 }
             }
 
-            // Add free surprise fruit icon at the end
-            if (!isEmpty) {
-                const fruitIcon = document.createElement('div');
-                fruitIcon.className = 'meal-ingredient-icon';
-                fruitIcon.textContent = '🎁';
-                fruitIcon.title = 'Free Surprise Fruit';
-                fruitIcon.style.fontSize = '0.8em';
-                mealPhoto.appendChild(fruitIcon);
-            }
+            // Add free fruit
+            html += `
+                <div class="meal-ingredient-item" style="opacity: 0.8; background: #f5f5f5; border-radius: 8px;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' dy='.35em'%3E🍎%3C/text%3E%3C/svg%3E" alt="Free Fruit">
+                    <div class="meal-ingredient-info">
+                        <div class="meal-ingredient-name">Fresh Fruit <span style="color: #000; font-size: 0.85em;">FREE</span></div>
+                        <div class="meal-ingredient-details">Included with every meal</div>
+                    </div>
+                    <div class="meal-ingredient-quantity">×1</div>
+                </div>
+            `;
+            
+            listContainer.innerHTML = html;
         }
 
         function selectQuickMeal(type) {
             // Reset all
             for (let key in ingredients) {
                 ingredients[key].qty = 0;
-                document.getElementById(`qty-${key}`).textContent = 0;
+                const qtyElement = document.getElementById(`qty-${key}`);
+                if (qtyElement) qtyElement.textContent = 0;
             }
 
             if (type === 'scalope') {
@@ -2464,16 +3737,24 @@
                 ingredients.eggs.qty = 1;
                 ingredients.omelette.qty = 1;
                 ingredients.salad.qty = 1;
-            } else if (type === 'balanced') {
-                // 100g rice (2 units) + 100g escalope (1 unit) + 2 eggs + 1 salad
-                ingredients.rice.qty = 2;
-                ingredients.scallop.qty = 1;
-                ingredients.eggs.qty = 2;
-                ingredients.salad.qty = 1;
             }
 
+            // Update display and highlight selected ingredients
             for (let key in ingredients) {
-                document.getElementById(`qty-${key}`).textContent = ingredients[key].qty;
+                const desktopQty = document.getElementById(`qty-${key}`);
+                const mobileQty = document.getElementById(`qty-mobile-${key}`);
+                
+                if (desktopQty) desktopQty.textContent = ingredients[key].qty;
+                if (mobileQty) mobileQty.textContent = ingredients[key].qty;
+                
+                // Highlight selected ingredients
+                if (ingredients[key].qty > 0) {
+                    const card = (desktopQty || mobileQty)?.closest('.ingredient-card');
+                    if (card) {
+                        card.classList.add('highlight');
+                        setTimeout(() => card.classList.remove('highlight'), 2000);
+                    }
+                }
             }
 
             updateTotals();
@@ -2481,48 +3762,33 @@
             updateItemCount();
             updateButtonStates();
 
-            // Automatically add to cart
-            const mealCount = parseInt(document.getElementById('mealCount').value) || 1;
-            const mealDescription = getMealDescription();
-            const totalPrice = parseFloat(document.getElementById('totalPrice').textContent);
-            const protein = document.getElementById('totalProtein').textContent;
-            const calories = document.getElementById('totalCalories').textContent;
-            const carbs = document.getElementById('totalCarbs').textContent;
-            const fats = document.getElementById('totalFats').textContent;
+            // Scroll to ingredients section to show what was selected
+            setTimeout(() => {
+                const ingredientsSection = document.querySelector('.ingredients-section');
+                if (ingredientsSection) {
+                    ingredientsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
 
-            // Create meal object and add to cart
-            const meal = {
-                id: Date.now(),
-                description: mealDescription,
-                ingredients: JSON.parse(JSON.stringify(ingredients)),
-                quantity: mealCount,
-                price: totalPrice,
-                protein: protein,
-                calories: calories,
-                carbs: carbs,
-                fats: fats
+            // Show a visual feedback message
+            const t = translations[currentLanguage];
+            const mealNames = {
+                'scalope': t.mealScalope || 'Escalope Meal',
+                'proteinOverdose': t.mealProteinOverdose || 'Protein Overdose'
             };
-
-            cart.push(meal);
-            updateCartDisplay();
-            clearMeal();
             
-            // Show cart section
-            document.getElementById('cartSection').style.display = 'block';
-
-            // Scroll to cart on mobile
-            if (window.innerWidth < 1200) {
-                setTimeout(() => {
-                    document.getElementById('cartSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 300);
-            }
+            // Show toast notification
+            showToast(`✅ ${mealNames[type]} ${t.mealSelected}`);
         }
 
         function selectDefaultMeal(type) {
             // Reset all
             for (let key in ingredients) {
                 ingredients[key].qty = 0;
-                document.getElementById(`qty-${key}`).textContent = 0;
+                const desktopQty = document.getElementById(`qty-${key}`);
+                const mobileQty = document.getElementById(`qty-mobile-${key}`);
+                if (desktopQty) desktopQty.textContent = 0;
+                if (mobileQty) mobileQty.textContent = 0;
             }
 
             if (type === 'power') {
@@ -2538,7 +3804,10 @@
             }
 
             for (let key in ingredients) {
-                document.getElementById(`qty-${key}`).textContent = ingredients[key].qty;
+                const desktopQty = document.getElementById(`qty-${key}`);
+                const mobileQty = document.getElementById(`qty-mobile-${key}`);
+                if (desktopQty) desktopQty.textContent = ingredients[key].qty;
+                if (mobileQty) mobileQty.textContent = ingredients[key].qty;
             }
 
             updateTotals();
@@ -2580,11 +3849,11 @@
             
             if (phone.length === 8) {
                 errorEl.style.display = 'none';
-                input.style.borderColor = '#22c55e';
+                input.style.borderColor = '#000';
             } else if (phone.length > 0) {
                 errorEl.style.display = 'block';
                 errorEl.textContent = t.phoneError;
-                input.style.borderColor = '#ef4444';
+                input.style.borderColor = '#666';
             } else {
                 errorEl.style.display = 'none';
                 input.style.borderColor = '#e0e0e0';
@@ -2618,7 +3887,7 @@
             if (customerPhone.length !== 8) {
                 phoneErrorEl.style.display = 'block';
                 phoneErrorEl.textContent = t.phoneError;
-                document.getElementById('customerPhone').style.borderColor = '#ef4444';
+                document.getElementById('customerPhone').style.borderColor = '#666';
                 document.getElementById('customerPhone').focus();
                 return;
             }
@@ -2626,7 +3895,7 @@
             // Close modal
             closeCustomerModal();
 
-            // Calculate totals from cart
+            // Calculate totals from cart or current meal (for direct purchase)
             let totalPrice = 0;
             let totalProtein = 0;
             let totalCalories = 0;
@@ -2634,14 +3903,36 @@
             let totalFats = 0;
             let mealsList = [];
 
-            cart.forEach((item, index) => {
-                totalPrice += item.price * item.quantity;
-                totalProtein += parseFloat(item.protein) * item.quantity;
-                totalCalories += parseFloat(item.calories) * item.quantity;
-                totalCarbs += parseFloat(item.carbs) * item.quantity;
-                totalFats += parseFloat(item.fats) * item.quantity;
-                mealsList.push(`Meal ${index + 1}: ${item.description} (Qty: ${item.quantity})`);
-            });
+            if (window.directPurchase) {
+                // Direct purchase - use current meal
+                const mealDescription = getMealDescription();
+                totalPrice = parseFloat(document.getElementById('totalPrice').textContent);
+                totalProtein = parseFloat(document.getElementById('totalProtein').textContent);
+                totalCalories = parseFloat(document.getElementById('totalCalories').textContent);
+                totalCarbs = parseFloat(document.getElementById('totalCarbs').textContent);
+                totalFats = parseFloat(document.getElementById('totalFats').textContent);
+                mealsList.push(`Meal 1: ${mealDescription} (Qty: 1)`);
+                
+                // Clear the direct purchase flag
+                window.directPurchase = false;
+                
+                // Clear the current meal (skip confirmation since order is confirmed)
+                clearMeal(true);
+            } else {
+                // Purchase from cart
+                cart.forEach((item, index) => {
+                    totalPrice += item.price * item.quantity;
+                    totalProtein += parseFloat(item.protein) * item.quantity;
+                    totalCalories += parseFloat(item.calories) * item.quantity;
+                    totalCarbs += parseFloat(item.carbs) * item.quantity;
+                    totalFats += parseFloat(item.fats) * item.quantity;
+                    mealsList.push(`Meal ${index + 1}: ${item.description} (Qty: ${item.quantity})`);
+                });
+                
+                // Clear cart after submission
+                cart = [];
+                updateCartDisplay();
+            }
 
             // Create form for Basin
             const form = document.createElement('form');
@@ -2670,11 +3961,6 @@
             }
 
             document.body.appendChild(form);
-            
-            // Clear cart after submission
-            cart = [];
-            updateCartDisplay();
-            
             form.submit();
         }
 
@@ -2718,6 +4004,36 @@
             document.getElementById('successModal').classList.remove('active');
         }
 
+        function showAddToCartModal() {
+            const t = translations[currentLanguage];
+            const modal = document.getElementById('successModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            // Create custom content for add to cart
+            modalContent.innerHTML = `
+                <h2>✅ ${t.mealAddedTitle || 'Meal Added!'}</h2>
+                <p>${t.mealAddedMessage || 'Your meal has been successfully added to the basket.'}</p>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal()">${t.continueShopping || 'Continue Shopping'}</button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="window.location.href='basket.html'">${t.viewBasket || 'View Basket'}</button>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
         // Initialize
         updateTotals();
         animateMeal();
@@ -2734,6 +4050,37 @@
         // Load saved language preference or default to Arabic
         const savedLang = localStorage.getItem('preferredLanguage') || 'ar';
         changeLanguage(savedLang);
+        
+        // Initialize header basket count
+        const headerBasketCount = document.getElementById('headerBasketCount');
+        if (headerBasketCount) {
+            headerBasketCount.textContent = cart.length;
+        }
+
+        // Sticky sidebar enhancement - add visual feedback when stuck
+        const observeSticky = () => {
+            const sidebar = document.querySelector('.meal-summary');
+            if (!sidebar) return;
+
+            const observer = new IntersectionObserver(
+                ([entry]) => {
+                    if (entry.intersectionRatio < 1) {
+                        sidebar.classList.add('is-stuck');
+                    } else {
+                        sidebar.classList.remove('is-stuck');
+                    }
+                },
+                { threshold: [1], rootMargin: '-20px 0px 0px 0px' }
+            );
+
+            observer.observe(sidebar);
+        };
+
+        // Call sticky observer on desktop only
+        if (window.innerWidth > 1200) {
+            observeSticky();
+        }
     </script>
 </body>
 </html>
+

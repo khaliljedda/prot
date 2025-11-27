@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Your Basket - prot.tn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .basket-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .basket-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-button {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .basket-count {
+            background: #000;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            border-color: #000;
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+
+        .basket-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .empty-basket {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-basket .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-basket h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-basket p {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .continue-shopping {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .continue-shopping:hover {
+            transform: scale(1.05);
+        }
+
+        .basket-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .basket-item:hover {
+            border-color: #000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .item-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .item-header-price {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* Meal Ingredients List - no scrollbar, natural height */
+        .meal-ingredients-list {
+            margin-bottom: 15px;
+        }
+
+        .meal-ingredient-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .meal-ingredient-item:last-child {
+            border-bottom: none;
+        }
+
+        .meal-ingredient-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Fresh Fruit - Premium Gift Style */
+        .meal-ingredient-item.free-gift {
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .gift-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .meal-ingredient-info {
+            flex: 1;
+        }
+
+        .meal-ingredient-name {
+            font-weight: 600;
+            font-size: 0.85em;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .meal-ingredient-details {
+            font-size: 0.7em;
+            color: #666;
+            line-height: 1.2;
+        }
+
+        .meal-ingredient-quantity {
+            font-weight: 700;
+            font-size: 0.9em;
+            color: #000;
+        }
+
+        /* Condensed Details Row */
+        .details-row {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.95em;
+        }
+
+        .details-row-title {
+            font-weight: 700;
+            color: #000;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #333;
+        }
+
+        .detail-item strong {
+            font-weight: 700;
+            color: #000;
+        }
+
+        .more-info-btn {
+            margin-left: auto;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .more-info-btn:hover {
+            background: #e0e0e0;
+            color: #000;
+        }
+
+        /* Nutritional Details Section - collapsible */
+        .nutritional-details {
+            display: none;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .nutritional-details.show {
+            display: block;
+        }
+
+        .nutritional-details-content {
+            display: block;
+        }
+
+        .macro-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.9em;
+        }
+
+        .macro-row:first-child {
+            padding-top: 0;
+        }
+
+        .macro-row:last-child {
+            padding-bottom: 0;
+        }
+
+        .item-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-btn:hover:not(:disabled) {
+            border-color: #000;
+            background: #000;
+            color: white;
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .quantity-display {
+            font-size: 1.2em;
+            font-weight: 700;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .remove-btn {
+            background: #666;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .remove-btn:hover {
+            background: #333;
+            transform: translateY(-1px);
+        }
+
+        .basket-summary {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .basket-summary h2 {
+            font-size: 1.3em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #000;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1em;
+            color: #666;
+        }
+
+        .summary-row strong {
+            color: #000;
+            font-weight: 600;
+        }
+
+        .summary-row.total {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #000;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .summary-row.total strong {
+            font-weight: 700;
+        }
+
+        .buy-all-btn {
+            width: 100%;
+            background: #000;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .buy-all-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .buy-all-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Customer Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        .error-message {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-cancel {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .modal-btn-confirm {
+            background: #000;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 20px 15px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .header-right {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .language-selector {
+                justify-content: center;
+            }
+
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            .basket-content {
+                padding: 20px 15px;
+            }
+
+            .basket-item {
+                padding: 15px;
+            }
+
+            .item-header {
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+            }
+
+            .item-title {
+                font-size: 1em;
+            }
+
+            .meal-ingredients-list {
+                margin-bottom: 12px;
+            }
+
+            .meal-ingredient-item {
+                padding: 5px 6px;
+                gap: 6px;
+            }
+
+            .meal-ingredient-item img {
+                width: 28px;
+                height: 28px;
+            }
+
+            .meal-ingredient-name {
+                font-size: 0.8em;
+            }
+
+            .meal-ingredient-details {
+                font-size: 0.65em;
+            }
+
+            .meal-ingredient-quantity {
+                font-size: 0.85em;
+            }
+
+            .item-price-display {
+                padding: 10px 12px;
+                margin-bottom: 8px;
+                gap: 6px;
+            }
+
+            .item-price-display .label {
+                font-size: 0.8em;
+            }
+
+            .item-price-display .value {
+                font-size: 1.3em;
+            }
+
+            .macro-highlights {
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .macro-card {
+                padding: 8px;
+            }
+
+            .macro-card .label {
+                font-size: 0.7em;
+                margin-bottom: 4px;
+            }
+
+            .macro-card .value {
+                font-size: 1.2em;
+            }
+
+            .nutritional-details {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+
+            .nutritional-details h3 {
+                font-size: 0.7em;
+            }
+
+            .info-icon {
+                width: 14px;
+                height: 14px;
+                font-size: 0.65em;
+            }
+
+            .nutritional-details-content {
+                margin-top: 6px;
+                padding-top: 6px;
+            }
+
+            .macro-row {
+                padding: 4px 0;
+                font-size: 0.8em;
+            }
+
+            .details-row {
+                font-size: 0.85em;
+                gap: 12px;
+                padding: 10px 12px;
+            }
+
+            .details-row-title {
+                font-size: 0.8em;
+            }
+
+            .detail-item {
+                font-size: 0.9em;
+            }
+
+            .more-info-btn {
+                font-size: 0.85em;
+            }
+
+            .item-controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .quantity-controls {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .quantity-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .remove-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .basket-summary {
+                position: relative;
+                padding: 20px 15px;
+            }
+
+            .summary-row {
+                font-size: 1em;
+                margin-bottom: 12px;
+            }
+
+            .summary-row.total {
+                font-size: 1.5em;
+            }
+        }
+
+        /* Alert styles */
+        .alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 2000;
+            animation: alertSlideIn 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        @keyframes alertSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .alert-success {
+            background: #000;
+            color: white;
+        }
+
+        .alert-error {
+            background: #666;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="back-button" onclick="goBack()">
+                <span>←</span>
+                <span data-translate="backToMenu">Back to Menu</span>
+            </button>
+            <h1 data-translate="yourBasket">Your Basket</h1>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="lang-btn" onclick="changeLanguage('en')" id="lang-en">🇬🇧 EN</button>
+                    <button class="lang-btn" onclick="changeLanguage('fr')" id="lang-fr">🇫🇷 FR</button>
+                    <button class="lang-btn active" onclick="changeLanguage('ar')" id="lang-ar">🇹🇳 AR</button>
+                </div>
+                <div class="basket-count" id="basketCount">0 <span data-translate="items">items</span></div>
+            </div>
+        </header>
+
+        <div class="basket-layout">
+            <!-- Left Column: Meals List -->
+            <div class="basket-content" id="basketContent">
+                <!-- Items will be loaded here -->
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="basket-summary" id="basketSummary" style="display: none;">
+                <h2 data-translate="orderSummary">Order Summary</h2>
+                <div class="summary-row">
+                    <span data-translate="subtotal">Subtotal:</span>
+                    <strong id="summaryTotal">0.00 TND</strong>
+                </div>
+                <div class="summary-row">
+                    <span data-translate="delivery">Delivery:</span>
+                    <strong>2.00 TND</strong>
+                </div>
+                <div style="border-top: 2px solid #e0e0e0; margin: 15px 0;"></div>
+                <div class="summary-row total">
+                    <span data-translate="total">Total:</span>
+                    <strong id="summaryGrandTotal">0.00 TND</strong>
+                </div>
+                <button class="buy-all-btn" onclick="buyAll()" id="buyAllBtn" data-translate="checkoutPay">
+                    Checkout / Pay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Info Modal -->
+    <div class="modal-overlay" id="customerModal" onclick="if(event.target === this) closeModal()">
+        <div class="modal">
+            <h2 class="modal-title" data-translate="customerInfo">Customer Information</h2>
+            <form id="customerForm" onsubmit="submitOrder(event)">
+                <div class="form-group">
+                    <label data-translate="yourName">Your Name:</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label data-translate="yourPhone">Your Phone Number:</label>
+                    <input type="tel" id="customerPhone" required pattern="[0-9]{8}" maxlength="8">
+                    <div class="error-message" id="phoneError" data-translate="phoneError">Phone number must be exactly 8 digits</div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal()" data-translate="cancel">Cancel</button>
+                    <button type="submit" class="modal-btn modal-btn-confirm" data-translate="confirmOrder">Confirm Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hidden form for Basin submission -->
+    <form id="basinForm" action="https://usebasin.com/f/b06e024d33ee" method="POST" style="display: none;">
+        <input type="hidden" name="customer_name" id="basin_name">
+        <input type="hidden" name="customer_phone" id="basin_phone">
+        <input type="hidden" name="meals" id="basin_meals">
+        <input type="hidden" name="total_items" id="basin_items">
+        <input type="hidden" name="total_price" id="basin_price">
+        <input type="hidden" name="total_protein" id="basin_protein">
+        <input type="hidden" name="total_calories" id="basin_calories">
+        <input type="hidden" name="total_carbs" id="basin_carbs">
+        <input type="hidden" name="total_fats" id="basin_fats">
+    </form>
+
+    <script>
+        // Translation System
+        let currentLanguage = 'ar';
+        
+        const translations = {
+            en: {
+                yourBasket: "Your Basket",
+                backToMenu: "Back to Menu",
+                items: "items",
+                item: "item",
+                emptyBasket: "Your basket is empty",
+                emptyBasketDesc: "Add some delicious meals to get started!",
+                continueShopping: "Continue Shopping",
+                orderSummary: "Order Summary",
+                subtotal: "Subtotal",
+                delivery: "Delivery",
+                total: "Total",
+                checkoutPay: "Checkout / Pay",
+                customerInfo: "Customer Information",
+                yourName: "Your Name",
+                yourPhone: "Your Phone Number",
+                phoneError: "Phone number must be exactly 8 digits",
+                confirmOrder: "Confirm Order",
+                cancel: "Cancel",
+                quantityUpdated: "Quantity updated",
+                itemRemoved: "Item removed from basket",
+                removeConfirm: "Are you sure you want to remove this item?",
+                meal: "Meal",
+                details: "Details",
+                moreInfo: "More Info",
+                carbohydrates: "Carbohydrates",
+                fats: "Fats",
+                fiber: "Fiber (from fruit)",
+                calories: "Cal",
+                protein: "Protein",
+                remove: "Remove",
+                rice: "Rice",
+                borghol: "Borghol",
+                escalope: "Escalope",
+                cuisse: "Chicken Thigh",
+                eggs: "Egg",
+                omelette: "Omelette",
+                salad: "Salad",
+                frite: "Frite",
+                perUnit: "per unit",
+                each: "each",
+                freshFruit: "Fresh Fruit",
+                included: "Included",
+                complimentary: "Complimentary with every meal",
+                free: "FREE"
+            },
+            fr: {
+                yourBasket: "Votre Panier",
+                backToMenu: "Retour au Menu",
+                items: "articles",
+                item: "article",
+                emptyBasket: "Votre panier est vide",
+                emptyBasketDesc: "Ajoutez de délicieux repas pour commencer!",
+                continueShopping: "Continuer les Achats",
+                orderSummary: "Résumé de la Commande",
+                subtotal: "Sous-total",
+                delivery: "Livraison",
+                total: "Total",
+                checkoutPay: "Payer / Commander",
+                customerInfo: "Informations Client",
+                yourName: "Votre Nom",
+                yourPhone: "Votre Numéro de Téléphone",
+                phoneError: "Le numéro doit contenir exactement 8 chiffres",
+                confirmOrder: "Confirmer la Commande",
+                cancel: "Annuler",
+                quantityUpdated: "Quantité mise à jour",
+                itemRemoved: "Article retiré du panier",
+                removeConfirm: "Êtes-vous sûr de vouloir supprimer cet article?",
+                meal: "Repas",
+                details: "Détails",
+                moreInfo: "Plus d'infos",
+                carbohydrates: "Glucides",
+                fats: "Graisses",
+                fiber: "Fibres (du fruit)",
+                calories: "Cal",
+                protein: "Protéines",
+                remove: "Retirer",
+                rice: "Riz",
+                borghol: "Borghol",
+                escalope: "Escalope",
+                cuisse: "Cuisse de Poulet",
+                eggs: "Œuf",
+                omelette: "Omelette",
+                salad: "Salade",
+                frite: "Frite",
+                perUnit: "par unité",
+                each: "chacun",
+                freshFruit: "Fruit Frais",
+                included: "Inclus",
+                complimentary: "Complimentaire avec chaque repas",
+                free: "GRATUIT"
+            },
+            ar: {
+                yourBasket: "سلتك",
+                backToMenu: "العودة إلى القائمة",
+                items: "عناصر",
+                item: "عنصر",
+                emptyBasket: "سلتك فارغة",
+                emptyBasketDesc: "أضف بعض الوجبات اللذيذة للبدء!",
+                continueShopping: "مواصلة التسوق",
+                orderSummary: "ملخص الطلب",
+                subtotal: "المجموع الفرعي",
+                delivery: "التوصيل",
+                total: "الإجمالي",
+                checkoutPay: "الدفع / الطلب",
+                customerInfo: "معلومات العميل",
+                yourName: "اسمك",
+                yourPhone: "رقم هاتفك",
+                phoneError: "يجب أن يحتوي رقم الهاتف على 8 أرقام بالضبط",
+                confirmOrder: "تأكيد الطلب",
+                cancel: "إلغاء",
+                quantityUpdated: "تم تحديث الكمية",
+                itemRemoved: "تم إزالة العنصر من السلة",
+                removeConfirm: "هل أنت متأكد من أنك تريد إزالة هذا العنصر؟",
+                meal: "وجبة",
+                details: "التفاصيل",
+                moreInfo: "المزيد من المعلومات",
+                carbohydrates: "الكربوهيدرات",
+                fats: "الدهون",
+                fiber: "الألياف (من الفاكهة)",
+                calories: "سعرة",
+                protein: "بروتين",
+                remove: "إزالة",
+                rice: "أرز",
+                borghol: "برغل",
+                escalope: "إسكالوب",
+                cuisse: "كويس",
+                eggs: "بيض",
+                omelette: "أومليت",
+                salad: "سلطة",
+                frite: "بطاطس",
+                perUnit: "لكل وحدة",
+                each: "لكل واحد",
+                freshFruit: "فاكهة طازجة",
+                included: "مشمول",
+                complimentary: "مجانية مع كل وجبة",
+                free: "مجاني"
+            }
+        };
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('preferredLanguage', lang);
+            
+            // Update active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('lang-' + lang).classList.add('active');
+            
+            // Update text direction
+            document.body.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+            
+            // Redisplay basket with new language
+            displayBasket();
+        }
+
+        // Load cart from localStorage
+        let cart = [];
+        try {
+            const savedCart = localStorage.getItem('cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+        } catch (e) {
+            console.error('Error loading cart:', e);
+            cart = [];
+        }
+
+        // Go back to main page
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Display basket items
+        // Get ingredient names based on current language
+        function getIngredientNames() {
+            const t = translations[currentLanguage];
+            return {
+                rice: t.rice,
+                borghol: t.borghol,
+                scallop: t.escalope,
+                cuisse: t.cuisse,
+                eggs: t.eggs,
+                omelette: t.omelette,
+                salad: t.salad,
+                frite: t.frite
+            };
+        }
+
+        const ingredientImages = {
+            rice: 'rice.jpeg',
+            borghol: 'borghol.jpg',
+            scallop: 'escalope.jpg',
+            cuisse: 'cuisse.jpeg',
+            eggs: 'egg.jpeg',
+            omelette: 'omelette.jpeg',
+            salad: 'salade.jpg',
+            frite: 'cuissed.jpeg'
+        };
+
+        const ingredientWeights = {
+            rice: '50g',
+            borghol: '50g',
+            scallop: '100g',
+            cuisse: '150g',
+            eggs: '50g',
+            omelette: '150g',
+            salad: '100g',
+            frite: '100g'
+        };
+
+        const ingredientPrices = {
+            rice: 1.50,
+            borghol: 1.50,
+            scallop: 8.50,
+            cuisse: 3.50,
+            eggs: 0.80,
+            omelette: 2.50,
+            salad: 1.50,
+            frite: 1.50
+        };
+
+        function toggleNutritionalDetails(index) {
+            const details = document.getElementById(`nutrition-details-${index}`);
+            if (details) {
+                details.classList.toggle('show');
+            }
+        }
+
+        function displayBasket() {
+            const t = translations[currentLanguage];
+            const ingredientNames = getIngredientNames();
+            const basketContent = document.getElementById('basketContent');
+            const basketCount = document.getElementById('basketCount');
+            const basketSummary = document.getElementById('basketSummary');
+            const buyAllBtn = document.getElementById('buyAllBtn');
+
+            // Update header translations
+            document.querySelector('[data-translate="yourBasket"]').textContent = t.yourBasket;
+            document.querySelector('[data-translate="backToMenu"]').textContent = t.backToMenu;
+            document.querySelector('[data-translate="items"]').textContent = cart.length === 1 ? t.item : t.items;
+            basketCount.innerHTML = `${cart.length} <span data-translate="items">${cart.length === 1 ? t.item : t.items}</span>`;
+
+            if (cart.length === 0) {
+                basketContent.innerHTML = `
+                    <div class="empty-basket">
+                        <div class="icon">🛒</div>
+                        <h2>${t.emptyBasket}</h2>
+                        <p>${t.emptyBasketDesc}</p>
+                        <button class="continue-shopping" onclick="goBack()">${t.continueShopping}</button>
+                    </div>
+                `;
+                basketSummary.style.display = 'none';
+                return;
+            }
+
+            let html = '';
+            let totalPrice = 0;
+            let totalProtein = 0;
+            let totalCalories = 0;
+            let totalCarbs = 0;
+            let totalFats = 0;
+            let totalItems = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                totalPrice += itemTotal;
+                totalItems += item.quantity;
+                
+                // Parse nutrition values
+                const proteinValue = parseFloat(item.protein) || 0;
+                const caloriesValue = parseFloat(item.calories) || 0;
+                const carbsValue = parseFloat(item.carbs) || 0;
+                const fatsValue = parseFloat(item.fats) || 0;
+                
+                totalProtein += proteinValue * item.quantity;
+                totalCalories += caloriesValue * item.quantity;
+                totalCarbs += carbsValue * item.quantity;
+                totalFats += fatsValue * item.quantity;
+
+                // Build ingredients list HTML
+                let ingredientsListHtml = '';
+                if (item.ingredients) {
+                    const order = ['rice', 'borghol', 'scallop', 'cuisse', 'eggs', 'omelette', 'salad', 'frite'];
+                    
+                    for (let key of order) {
+                        if (item.ingredients[key] && item.ingredients[key].qty > 0) {
+                            const ing = item.ingredients[key];
+                            ingredientsListHtml += `
+                                <div class="meal-ingredient-item">
+                                    <img src="${ingredientImages[key]}" alt="${ingredientNames[key]}">
+                                    <div class="meal-ingredient-info">
+                                        <div class="meal-ingredient-name">${ingredientNames[key]}</div>
+                                        <div class="meal-ingredient-details">${ingredientWeights[key]} ${t.perUnit} • ${ingredientPrices[key].toFixed(2)} TND ${t.each}</div>
+                                    </div>
+                                    <div class="meal-ingredient-quantity">×${ing.qty}</div>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    // Add free fruit - premium gift style
+                    ingredientsListHtml += `
+                        <div class="meal-ingredient-item free-gift">
+                            <div class="gift-icon">🎁</div>
+                            <div class="meal-ingredient-info">
+                                <div class="meal-ingredient-name">${t.freshFruit} <span style="color: #2e7d32; font-size: 0.8em; font-weight: 700;">(${t.included})</span></div>
+                                <div class="meal-ingredient-details">${t.complimentary}</div>
+                            </div>
+                            <div class="meal-ingredient-quantity" style="color: #2e7d32; font-weight: 700;">${t.free}</div>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="basket-item">
+                        <div class="item-header">
+                            <div class="item-title">${t.meal} ${index + 1}</div>
+                            <div class="item-header-price">${itemTotal.toFixed(2)} TND</div>
+                        </div>
+
+                        <!-- Ingredients List -->
+                        <div class="meal-ingredients-list">
+                            ${ingredientsListHtml}
+                        </div>
+
+                        <!-- Condensed Details Row -->
+                        <div class="details-row">
+                            <span class="details-row-title">${t.details}:</span>
+                            <div class="detail-item">
+                                <span>🔥</span>
+                                <strong>${item.calories}</strong>
+                                <span>${t.calories}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>💪</span>
+                                <strong>${item.protein}g</strong>
+                                <span>${t.protein}</span>
+                            </div>
+                            <div class="more-info-btn" onclick="toggleNutritionalDetails(${index})">
+                                <span>ℹ️</span>
+                                <span>${t.moreInfo}</span>
+                            </div>
+                        </div>
+
+                        <!-- Nutritional Details (collapsible) -->
+                        <div class="nutritional-details" id="nutrition-details-${index}">
+                            <div class="nutritional-details-content">
+                                <div class="macro-row">
+                                    <span>${t.carbohydrates}</span>
+                                    <strong>${item.carbs}g</strong>
+                                </div>
+                                <div class="macro-row">
+                                    <span>${t.fats}</span>
+                                    <strong>${item.fats}g</strong>
+                                </div>
+                                <div class="macro-row">
+                                    <span>${t.fiber}</span>
+                                    <strong>4g</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantity Controls -->
+                        <div class="item-controls">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+                                <div class="quantity-display">${item.quantity}</div>
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)" ${item.quantity >= 10 ? 'disabled' : ''}>+</button>
+                            </div>
+                            <button class="remove-btn" onclick="removeItem(${index})">
+                                <span>🗑️</span>
+                                <span>${t.remove}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            basketContent.innerHTML = html;
+
+            // Update summary
+            const deliveryFee = 2.00;
+            const grandTotal = totalPrice + deliveryFee;
+            
+            document.getElementById('summaryTotal').textContent = totalPrice.toFixed(2) + ' TND';
+            document.getElementById('summaryGrandTotal').textContent = grandTotal.toFixed(2) + ' TND';
+            
+            // Update summary translations
+            document.querySelector('[data-translate="orderSummary"]').textContent = t.orderSummary;
+            document.querySelector('[data-translate="subtotal"]').textContent = t.subtotal + ':';
+            document.querySelector('[data-translate="delivery"]').textContent = t.delivery + ':';
+            document.querySelector('[data-translate="total"]').textContent = t.total + ':';
+            document.querySelector('[data-translate="checkoutPay"]').textContent = t.checkoutPay;
+            
+            basketSummary.style.display = 'block';
+            buyAllBtn.disabled = false;
+        }
+
+        // Update quantity
+        function updateQuantity(index, change) {
+            if (index < 0 || index >= cart.length) return;
+            
+            const newQty = cart[index].quantity + change;
+            if (newQty < 1 || newQty > 10) return;
+            
+            cart[index].quantity = newQty;
+            saveCart();
+            displayBasket();
+            const t = translations[currentLanguage];
+            showAlert(t.quantityUpdated, 'success');
+        }
+
+        // Remove item
+        function removeItem(index) {
+            if (index < 0 || index >= cart.length) return;
+            
+            const t = translations[currentLanguage];
+            if (confirm(t.removeConfirm)) {
+                cart.splice(index, 1);
+                saveCart();
+                displayBasket();
+                showAlert(t.itemRemoved, 'success');
+            }
+        }
+
+        // Save cart to localStorage
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Buy all
+        function buyAll() {
+            if (cart.length === 0) return;
+            
+            // Update modal translations
+            const t = translations[currentLanguage];
+            document.querySelector('[data-translate="customerInfo"]').textContent = t.customerInfo;
+            document.querySelector('[data-translate="yourName"]').textContent = t.yourName + ':';
+            document.querySelector('[data-translate="yourPhone"]').textContent = t.yourPhone + ':';
+            document.querySelector('[data-translate="phoneError"]').textContent = t.phoneError;
+            document.querySelector('[data-translate="cancel"]').textContent = t.cancel;
+            document.querySelector('[data-translate="confirmOrder"]').textContent = t.confirmOrder;
+            
+            document.getElementById('customerModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('customerModal').classList.remove('active');
+            document.getElementById('customerForm').reset();
+            document.getElementById('phoneError').classList.remove('show');
+        }
+
+        // Submit order
+        function submitOrder(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            
+            // Validate phone
+            if (!/^\d{8}$/.test(phone)) {
+                document.getElementById('phoneError').classList.add('show');
+                return;
+            }
+            
+            document.getElementById('phoneError').classList.remove('show');
+            
+            // Prepare order data
+            let meals = '';
+            let totalItems = 0;
+            let totalPrice = 0;
+            let totalProtein = 0;
+            let totalCalories = 0;
+            let totalCarbs = 0;
+            let totalFats = 0;
+            
+            cart.forEach((item, idx) => {
+                const itemTotal = item.price * item.quantity;
+                meals += `Meal ${idx + 1}: ${item.description} (Qty: ${item.quantity}) - ${itemTotal.toFixed(2)} TND | `;
+                totalItems += item.quantity;
+                totalPrice += itemTotal;
+                
+                const proteinValue = parseFloat(item.protein) || 0;
+                const caloriesValue = parseFloat(item.calories) || 0;
+                const carbsValue = parseFloat(item.carbs) || 0;
+                const fatsValue = parseFloat(item.fats) || 0;
+                
+                totalProtein += proteinValue * item.quantity;
+                totalCalories += caloriesValue * item.quantity;
+                totalCarbs += carbsValue * item.quantity;
+                totalFats += fatsValue * item.quantity;
+            });
+            
+            // Fill hidden form
+            document.getElementById('basin_name').value = name;
+            document.getElementById('basin_phone').value = phone;
+            document.getElementById('basin_meals').value = meals;
+            document.getElementById('basin_items').value = totalItems;
+            document.getElementById('basin_price').value = totalPrice.toFixed(2) + ' TND';
+            document.getElementById('basin_protein').value = totalProtein.toFixed(0) + 'g';
+            document.getElementById('basin_calories').value = totalCalories.toFixed(0) + ' kcal';
+            document.getElementById('basin_carbs').value = totalCarbs.toFixed(0) + 'g';
+            document.getElementById('basin_fats').value = totalFats.toFixed(1) + 'g';
+            
+            // Submit form
+            document.getElementById('basinForm').submit();
+            
+            // Clear cart
+            cart = [];
+            saveCart();
+            closeModal();
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+
+        // Initialize
+        // Load saved language preference or default to Arabic
+        const savedLang = localStorage.getItem('preferredLanguage') || 'ar';
+        changeLanguage(savedLang);
+    </script>
+</body>
+</html>
+
