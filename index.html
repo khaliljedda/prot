@@ -6,6 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="logo-prot.png">
     <title>prot.tn - Protein House</title>
     <style>
         * {
@@ -2727,10 +2728,6 @@
                                         <strong>80</strong>
                                     </div>
                                     <div class="nutrition-item">
-                                        <span>Fiber</span>
-                                        <strong>4g</strong>
-                                    </div>
-                                    <div class="nutrition-item">
                                         <span>Vitamin C</span>
                                         <strong>High</strong>
                                     </div>
@@ -2786,10 +2783,6 @@
                         <div class="macro-row">
                             <span data-translate="fats">Fats</span>
                             <strong><span id="totalFats">0</span>g</strong>
-                        </div>
-                        <div class="macro-row">
-                            <span data-translate="fiber">Fiber (from fruit)</span>
-                            <strong><span id="totalFiber">4</span>g</strong>
                         </div>
                     </div>
 
@@ -2900,7 +2893,6 @@
                 nutritionalDetails: "Nutritional Details",
                 carbohydrates: "Carbohydrates",
                 fats: "Fats",
-                fiber: "Fiber (from fruit)",
                 numberOfMeals: "Number of Meals",
                 buyNow: "Buy Now",
                 saveMeal: "Save Meal",
@@ -2982,7 +2974,6 @@
                 nutritionalDetails: "Détails Nutritionnels",
                 carbohydrates: "Glucides",
                 fats: "Lipides",
-                fiber: "Fibres (des fruits)",
                 numberOfMeals: "Nombre de Repas",
                 buyNow: "Acheter",
                 saveMeal: "Sauvegarder",
@@ -3064,7 +3055,6 @@
                 nutritionalDetails: "التفاصيل الغذائية",
                 carbohydrates: "الكربوهيدرات",
                 fats: "الدهون",
-                fiber: "الألياف (من الفواكه)",
                 numberOfMeals: "عدد الوجبات",
                 buyNow: "اشتري الآن",
                 saveMeal: "احفظ الوجبة",
@@ -3140,7 +3130,6 @@
             document.querySelector('[data-translate="nutritionalDetails"]').textContent = t.nutritionalDetails;
             document.querySelector('[data-translate="carbohydrates"]').textContent = t.carbohydrates;
             document.querySelector('[data-translate="fats"]').textContent = t.fats;
-            document.querySelector('[data-translate="fiber"]').textContent = t.fiber;
             document.querySelector('[data-translate="numberOfMeals"]').textContent = t.numberOfMeals;
             
             // Update buttons
