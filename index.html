@@ -2324,6 +2324,109 @@
                 font-size: 0.9em;
             }
         }
+
+        /* Welcome Screen - Mobile Only */
+        .welcome-screen {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .welcome-greeting {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .welcome-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .welcome-option {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-option:active {
+            transform: scale(0.98);
+        }
+
+        .welcome-option:hover {
+            border-color: #000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .welcome-option-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .welcome-option-button {
+            background: #000;
+            color: white;
+            padding: 18px;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-option:hover .welcome-option-button {
+            background: #333;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-screen {
+                display: block;
+            }
+        }
+
+        /* Footer highlight animation */
+        .meal-summary.highlight-change {
+            animation: highlightPulse 0.6s ease-in-out;
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% {
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 5px 20px rgba(0,0,0,0.2);
+                transform: scale(1.02);
+            }
+        }
+
+        .meal-summary.highlight-change .meal-ingredients-list,
+        .meal-summary.highlight-change .macro-summary,
+        .meal-summary.highlight-change .total-price {
+            animation: contentFlash 0.6s ease-in-out;
+        }
+
+        @keyframes contentFlash {
+            0%, 100% {
+                background: transparent;
+            }
+            50% {
+                background: rgba(255, 215, 0, 0.2);
+            }
+        }
     </style>
 </head>
 <body>
@@ -2343,6 +2446,21 @@
             </div>
         </header>
 
+        <!-- Welcome Screen - Mobile Only -->
+        <div class="welcome-screen">
+            <h2 class="welcome-greeting" data-translate="welcomeGreeting">Welcome to Prot.tn. What are we eating today?</h2>
+            <div class="welcome-options">
+                <div class="welcome-option" onclick="scrollToQuickMeals()">
+                    <img src="plat-scaloppe.png" alt="Order Meals" class="welcome-option-image">
+                    <button class="welcome-option-button" data-translate="orderMeals">Order one of our Meals</button>
+                </div>
+                <div class="welcome-option" onclick="scrollToCustomMeal()">
+                    <img src="escalope.jpg" alt="Build Custom" class="welcome-option-image">
+                    <button class="welcome-option-button" data-translate="buildCustom">Build Custom Meal</button>
+                </div>
+            </div>
+        </div>
+
         <div class="page-layout">
             <div class="main-content">
                 <div class="builder-section">
@@ -2354,7 +2472,7 @@
                             <div class="quick-meal-content">
                                 <div class="quick-meal-header">
                                     <h3 data-translate="mealScalope">Escalope Meal</h3>
-                                    <div class="quick-meal-price">8.00 TND</div>
+                                    <div class="quick-meal-price">9.00 TND</div>
                                 </div>
                                 <div class="meal-description" data-translate="mealScalopeDesc">Rice + Escalope + Salad</div>
                                 <div class="meal-nutrition">
@@ -2389,7 +2507,7 @@
                             <div class="ingredient-card">
                                 <img src="rice.jpeg" alt="Rice" class="ingredient-image">
                                 <div class="ingredient-header">
-                                    <div class="ingredient-price-badge">1.50 TND</div>
+                                    <div class="ingredient-price-badge">2.00 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="rice">Rice <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">100g <span data-translate="perUnit">per unit</span></div>
@@ -2410,7 +2528,7 @@
                                     </div>
                                     <div class="nutrition-item">
                                         <span data-translate="priceLabel">Price</span>
-                                        <strong>1.50 TND</strong>
+                                        <strong>2.00 TND</strong>
                                     </div>
                                 </div>
                                 <div class="ingredient-controls-compact">
@@ -2421,7 +2539,7 @@
                                     </div>
                                 </div>
                                 <div class="ingredient-card-footer">
-                                    <div class="ingredient-price-display">1.50 TND</div>
+                                    <div class="ingredient-price-display">2.00 TND</div>
                                     <div class="ingredient-controls">
                                         <button class="control-btn" onclick="updateIngredient('rice', -1)">−</button>
                                         <div class="quantity-display" id="qty-rice">0</div>
@@ -2433,7 +2551,7 @@
                             <div class="ingredient-card">
                                 <img src="borghol.jpg" alt="Borghol" class="ingredient-image">
                                 <div class="ingredient-header">
-                                    <div class="ingredient-price-badge">1.50 TND</div>
+                                    <div class="ingredient-price-badge">2.00 TND</div>
                                     <div class="ingredient-title-section">
                                         <div class="ingredient-name" data-ingredient="borghol">Borghol <span class="info-icon" onclick="toggleNutrition(this)">ℹ️</span></div>
                                         <div class="ingredient-unit">100g <span data-translate="perUnit">per unit</span></div>
@@ -2454,7 +2572,7 @@
                                     </div>
                                     <div class="nutrition-item">
                                         <span data-translate="priceLabel">Price</span>
-                                        <strong>1.50 TND</strong>
+                                        <strong>2.00 TND</strong>
                                     </div>
                                 </div>
                                 <div class="ingredient-controls-compact">
@@ -2465,7 +2583,7 @@
                                     </div>
                                 </div>
                                 <div class="ingredient-card-footer">
-                                    <div class="ingredient-price-display">1.50 TND</div>
+                                    <div class="ingredient-price-display">2.00 TND</div>
                                     <div class="ingredient-controls">
                                         <button class="control-btn" onclick="updateIngredient('borghol', -1)">−</button>
                                         <div class="quantity-display" id="qty-borghol">0</div>
@@ -2938,7 +3056,10 @@
                 emptyCart: "Your basket is empty",
                 remove: "×",
                 total: "Total:",
-                mealSelected: "selected! Scroll down to modify or add to basket."
+                mealSelected: "selected! Scroll down to modify or add to basket.",
+                welcomeGreeting: "Welcome to Prot.tn. What are we eating today?",
+                orderMeals: "Order one of our Meals",
+                buildCustom: "Build Custom Meal"
             },
             fr: {
                 headerSubtitle: "Maison Premium de Protéines - Créez Votre Repas Parfait",
@@ -3021,7 +3142,10 @@
                 emptyCart: "Votre panier est vide",
                 remove: "×",
                 total: "Total:",
-                mealSelected: "sélectionné! Faites défiler pour modifier ou ajouter au panier."
+                mealSelected: "sélectionné! Faites défiler pour modifier ou ajouter au panier.",
+                welcomeGreeting: "Bienvenue chez Prot.tn. Qu'allons-nous manger aujourd'hui?",
+                orderMeals: "Commander l'un de nos Repas",
+                buildCustom: "Créer un Repas Personnalisé"
             },
             ar: {
                 headerSubtitle: "بيت البروتين الممتاز - اصنع وجبتك المثالية",
@@ -3104,7 +3228,10 @@
                 emptyCart: "سلتك فارغة",
                 remove: "×",
                 total: "الإجمالي:",
-                mealSelected: "تم الاختيار! قم بالتمرير لأسفل للتعديل أو الإضافة للسلة."
+                mealSelected: "تم الاختيار! قم بالتمرير لأسفل للتعديل أو الإضافة للسلة.",
+                welcomeGreeting: "مرحبا بك في Prot.tn. ماذا سنأكل اليوم؟",
+                orderMeals: "اطلب إحدى وجباتنا",
+                buildCustom: "صمم وجبتك الخاصة"
             }
         };
 
@@ -3254,7 +3381,7 @@
                 carbs: 40, 
                 fat: 0.5, 
                 calories: 175, 
-                price: 1.50,
+                price: 2.00,
                 emoji: '🍚'
             },
             borghol: { 
@@ -3263,7 +3390,7 @@
                 carbs: 38, 
                 fat: 0.8, 
                 calories: 170, 
-                price: 1.50,
+                price: 2.00,
                 emoji: '🍛'
             },
             scallop: { 
@@ -3373,6 +3500,7 @@
             animateMeal();
             updateItemCount();
             updateButtonStates();
+            highlightFooter();
         }
 
         function changeMealCount(change) {
@@ -4074,6 +4202,38 @@
         // Call sticky observer on desktop only
         if (window.innerWidth > 1200) {
             observeSticky();
+        }
+
+        // Scroll to Quick Meals section
+        function scrollToQuickMeals() {
+            const quickMealsSection = document.querySelector('.quick-meals-section');
+            if (quickMealsSection) {
+                quickMealsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Scroll to Custom Meal Builder (Ingredients section)
+        function scrollToCustomMeal() {
+            const ingredientsSection = document.querySelector('.ingredients-section');
+            if (ingredientsSection) {
+                ingredientsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Highlight footer when ingredients change
+        function highlightFooter() {
+            const footer = document.querySelector('.meal-summary');
+            if (footer) {
+                footer.classList.remove('highlight-change');
+                // Force reflow to restart animation
+                void footer.offsetWidth;
+                footer.classList.add('highlight-change');
+                
+                // Remove the class after animation completes
+                setTimeout(() => {
+                    footer.classList.remove('highlight-change');
+                }, 600);
+            }
         }
     </script>
 </body>
